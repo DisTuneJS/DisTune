@@ -1,30 +1,30 @@
 # Updating from v4 to v5
 
-## DisTube
+## DisTune
 
-DisTube doesn't support any music sources anymore. You have to use plugins to support them.
+DisTune doesn't support any music sources anymore. You have to use plugins to support them.
 
-### DisTubeOptions
+### DisTuneOptions
 
 Removed `streamType`, `youtubeCookie`, `ytdlOptions`, `searchSongs`, `directLink`, `leaveOnStop`, `leaveOnEmpty` and `leaveOnFinish` options.
 
-- `leaveOnEmpty`: Check [Handling Discord.js Events](https://github.com/skick1234/DisTube/wiki/Handling-Discord.js-Events)
+- `leaveOnEmpty`: Check [Handling Discord.js Events](https://github.com/DisTuneJS/DisTune/wiki/Handling-Discord.js-Events)
 - `leaveOnStop`: Add `queue.voice.leave()` after `queue.stop()` line
 - `leaveOnFinish`: Add `queue.voice.leave()` in the `finish` event
-- `directLink`: Use `@distube/direct-link` plugin
-- `youtubeCookie` and `ytdlOptions`: Check the `@distube/youtube` plugin options
+- `directLink`: Use `@DisTune/direct-link` plugin
+- `youtubeCookie` and `ytdlOptions`: Check the `@DisTune/youtube` plugin options
 
-### DisTube#search
+### DisTune#search
 
-DisTube#search was removed since it doesn't support YouTube anymore, you can use `YouTubePlugin#search` or `SoundCloudPlugin#search`,... instead.\
+DisTune#search was removed since it doesn't support YouTube anymore, you can use `YouTubePlugin#search` or `SoundCloudPlugin#search`,... instead.\
 Please check the plugin docs for more information.
 
 ```ts
-import { YouTubePlugin } from "@distube/youtube"
-import { DisTube } from "distube"
+import { YouTubePlugin } from "@DisTune/youtube"
+import { DisTune } from "DisTune"
 
 const ytPlugin = new YouTubePlugin(...);
-const distube = new DisTube({
+const DisTune = new DisTune({
     plugins: [ytPlugin],
     ...
 })
@@ -37,11 +37,11 @@ ytPlugin.search(query, { type: "video", limit: 5, safeSearch: true }).then(conso
 - `error` event arguments changed. Check the API docs for details.
 
 ```diff
-- distube.on('error', (channel, e) => {
+- DisTune.on('error', (channel, e) => {
 -   if (channel) channel.send(`An error encountered: ${e}`)
 -   else console.error(e)
 -})
-+ distube.on('error', (e, queue, song) => {
++ DisTune.on('error', (e, queue, song) => {
 +   queue.textChannel.send(`An error encountered: ${e}`);
 + })
 ```
@@ -63,7 +63,7 @@ ytPlugin.search(query, { type: "video", limit: 5, safeSearch: true }).then(conso
 
 On v5, `Song` info is not represented the `Song` will be streamed to the voice channel if `Song#playFromSource` is `false`
 
-Example: `s` is a Spotify `Song`, `s.source` is `spotify`, `s.playFromSource` is `false`. When the song plays, `s.stream.song` will be a stream-able `Song` searched with an `ExtractorPlugin`. And DisTube will play the `s.stream.song` instead of `s`
+Example: `s` is a Spotify `Song`, `s.source` is `spotify`, `s.playFromSource` is `false`. When the song plays, `s.stream.song` will be a stream-able `Song` searched with an `ExtractorPlugin`. And DisTune will play the `s.stream.song` instead of `s`
 
 Note: `Song#stream.url` or `Song#stream.song` is only available when the song is playing.
 
@@ -71,75 +71,75 @@ Note: `Song#stream.url` or `Song#stream.song` is only available when the song is
 
 ## Before you start
 
-v4 requires discord.js v14 to use, so make sure you're up to date. To update your discord.js code, check [their guide](https://discordjs.guide/) before updating DisTube code.
+v4 requires discord.js v14 to use, so make sure you're up to date. To update your discord.js code, check [their guide](https://discordjs.guide/) before updating DisTune code.
 Also, update plugins if you're using them.
 
-## DisTube
+## DisTune
 
-### DisTubeOptions
+### DisTuneOptions
 
-The built-in `youtube-dl` plugin is removed for more convenient updating in the future. Now, you can use the new [`@distube/yt-dlp` plugin](https://www.npmjs.com/package/@distube/yt-dlp).
+The built-in `youtube-dl` plugin is removed for more convenient updating in the future. Now, you can use the new [`@DisTune/yt-dlp` plugin](https://www.npmjs.com/package/@DisTune/yt-dlp).
 
 ```diff
-- const distube = new DisTube({ youtubeDL: true, updateYouTubeDL: false })
-+ const { YtDlpPlugin } = require("@distube/yt-dlp")
-+ const distube = new DisTube({ plugins: [new YtDlpPlugin({ update: false })] })
+- const DisTune = new DisTune({ youtubeDL: true, updateYouTubeDL: false })
++ const { YtDlpPlugin } = require("@DisTune/yt-dlp")
++ const DisTune = new DisTune({ plugins: [new YtDlpPlugin({ update: false })] })
 ```
 
-### DisTube#play
+### DisTune#play
 
-- `DisTube#play` no longer supports `Message` as its parameter, requiring `BaseGuildVoiceChannel` instead (same as v3 `DisTube#playVoiceChannel`). This also has an `options` parameter for providing optional arguments.
+- `DisTune#play` no longer supports `Message` as its parameter, requiring `BaseGuildVoiceChannel` instead (same as v3 `DisTune#playVoiceChannel`). This also has an `options` parameter for providing optional arguments.
 
 ```diff
-- distube.play(message, ...)
-+ distube.play(message.member.voice.channel, ..., { message, member: message.member })
+- DisTune.play(message, ...)
++ DisTune.play(message.member.voice.channel, ..., { message, member: message.member })
 ```
 
 - `options.position` has been added for customize added song/playlist position. That why `options.unshift` no longer exists on this version.
 
 ```diff
-- distube.play(..., { unshift: true })
-+ distube.play(..., { position: 1 })
+- DisTune.play(..., { unshift: true })
++ DisTune.play(..., { position: 1 })
 ```
 
-- Now this method throw an error if DisTube cannot play the input song instead of emitting to the `error` event.
+- Now this method throw an error if DisTune cannot play the input song instead of emitting to the `error` event.
 
 ```js
-distube.play().catch(err => {
+DisTune.play().catch(err => {
   message.reply(err);
 });
 // Or
 async function play() {
   try {
-    await distube.play();
+    await DisTune.play();
   } catch (err) {
     message.reply(err);
   }
 }
 ```
 
-### DisTube#playVoiceChannel
+### DisTune#playVoiceChannel
 
-This method has been removed and replaced with `DisTube#play`.
+This method has been removed and replaced with `DisTune#play`.
 
 ```diff
-- distube.playVoiceChannel(...)
-+ distube.play(...)
+- DisTune.playVoiceChannel(...)
++ DisTune.play(...)
 ```
 
-### DisTube#playCustomPlaylist
+### DisTune#playCustomPlaylist
 
-`DisTube#playCustomPlaylist` has been removed. You can use `DisTube#createCustomPlaylist` and `DisTube#play` instead.
+`DisTune#playCustomPlaylist` has been removed. You can use `DisTune#createCustomPlaylist` and `DisTune#play` instead.
 
 ```diff
 const songs = ["https://www.youtube.com/watch?v=xxx", "https://www.youtube.com/watch?v=yyy"];
-- distube.playCustomPlaylist(message, songs, { name: "My playlist name" });
-+ const playlist = await distube.createCustomPlaylist(songs, {
+- DisTune.playCustomPlaylist(message, songs, { name: "My playlist name" });
++ const playlist = await DisTune.createCustomPlaylist(songs, {
 +     member: message.member,
 +     properties: { name: "My playlist name" },
 +     parallel: true
 + });
-+ distube.play(message.member.voice.channel, playlist);
++ DisTune.play(message.member.voice.channel, playlist);
 ```
 
 ## Queue
@@ -171,33 +171,33 @@ queue.filters.clear();
 
 ## Requirement
 
-DisTube v3 is built on `@discordjs/voice`. That why we need to install [@discordjs/voice](https://github.com/discordjs/voice) and [sodium](https://www.npmjs.com/package/sodium) or [libsodium-wrappers](https://www.npmjs.com/package/libsodium-wrappers)
+DisTune v3 is built on `@discordjs/voice`. That why we need to install [@discordjs/voice](https://github.com/discordjs/voice) and [sodium](https://www.npmjs.com/package/sodium) or [libsodium-wrappers](https://www.npmjs.com/package/libsodium-wrappers)
 
 ```sh
 npm i @discordjs/voice sodium
 ```
 
-## DisTube class
+## DisTune class
 
 ### Constructor
 
-v3 is written in TypeScript, so we need to change how to create the DisTube instance.
+v3 is written in TypeScript, so we need to change how to create the DisTune instance.
 
 ```diff
-const DisTube = require("distube")
-- const distube = new DisTube(options)
-+ const distube = new DisTube.default(options) // or new DisTube.DisTube(options)
+const DisTune = require("DisTune")
+- const DisTune = new DisTune(options)
++ const DisTune = new DisTune.default(options) // or new DisTune.DisTune(options)
 ```
 
 or
 
 ```diff
-- const DisTube = require("distube")
-+ const { DisTube } = require("distube")
-const distube = new DisTube(options)
+- const DisTune = require("DisTune")
++ const { DisTune } = require("DisTune")
+const DisTune = new DisTune(options)
 ```
 
-## DisTube Events
+## DisTune Events
 
 ### Changes
 
@@ -238,7 +238,7 @@ v3 doesn't emit `Message` parameter anymore. 100% events are changed. You can ch
 According to the above example, you will think it's make your code longer. But no, if you use the same template with your `playList` and `playSong` event, this will help you reduce some duplication code.
 
 ```js
-distube.on("playSong", (queue, song) => {
+DisTune.on("playSong", (queue, song) => {
   let msg = `Playing \`${song.name}\` - \`${song.formattedDuration}\``;
   if (song.playlist) msg = `Playlist: ${song.playlist.name}\n${msg}`;
   queue.textChannel.send(msg);
@@ -249,66 +249,66 @@ distube.on("playSong", (queue, song) => {
 
 New events on v3:
 
-- [deleteQueue](https://distube.js.org/#/docs/DisTube/v3/class/DisTube?scrollTo=e-deleteQueue)
-- [disconnect](https://distube.js.org/#/docs/DisTube/v3/class/DisTube?scrollTo=e-disconnect)
-- [finishSong](https://distube.js.org/#/docs/DisTube/v3/class/DisTube?scrollTo=e-finishSong)
-- [searchDone](https://distube.js.org/#/docs/DisTube/v3/class/DisTube?scrollTo=e-searchDone)
-- [searchInvalidAnswer](https://distube.js.org/#/docs/DisTube/v3/class/DisTube?scrollTo=e-searchInvalidAnswer)
-- [searchNoResult](https://distube.js.org/#/docs/DisTube/v3/class/DisTube?scrollTo=e-searchNoResult)
+- [deleteQueue](https://DisTune.js.org/#/docs/DisTune/v3/class/DisTune?scrollTo=e-deleteQueue)
+- [disconnect](https://DisTune.js.org/#/docs/DisTune/v3/class/DisTune?scrollTo=e-disconnect)
+- [finishSong](https://DisTune.js.org/#/docs/DisTune/v3/class/DisTune?scrollTo=e-finishSong)
+- [searchDone](https://DisTune.js.org/#/docs/DisTune/v3/class/DisTune?scrollTo=e-searchDone)
+- [searchInvalidAnswer](https://DisTune.js.org/#/docs/DisTune/v3/class/DisTune?scrollTo=e-searchInvalidAnswer)
+- [searchNoResult](https://DisTune.js.org/#/docs/DisTune/v3/class/DisTune?scrollTo=e-searchNoResult)
 
 Click above links and read the docs for more information.
 
-## DisTube Methods
+## DisTune Methods
 
 ### Changes
 
 #### Removed methods
 
-- `DisTube#playSkip` is removed in favor of `DisTube#play` with skip parameter
-- `DisTube#runAutoplay` is removed in favor of `DisTube#addRelatedSong`
-- `DisTube#isPlaying`, `DisTube#isPaused` is removed
+- `DisTune#playSkip` is removed in favor of `DisTune#play` with skip parameter
+- `DisTune#runAutoplay` is removed in favor of `DisTune#addRelatedSong`
+- `DisTune#isPlaying`, `DisTune#isPaused` is removed
 
-#### DisTube#play
+#### DisTune#play
 
 `skip` parameter becomes a property in `options` parameter. Add `unshift` property to `options`
 
 ```diff
-- <DisTube>#playSkip(...)
-- <DisTube>#play(..., true)
-+ <DisTube>#play(..., { skip: true })
+- <DisTune>#playSkip(...)
+- <DisTune>#play(..., true)
++ <DisTune>#play(..., { skip: true })
 ```
 
-#### DisTube#playCustomPlaylist
+#### DisTune#playCustomPlaylist
 
 `skip` parameter becomes a property in `options` parameter. Add `parallel` and `unshift` property to `options`
 
 ```diff
-- <DisTube>#playCustomPlaylist(..., true)
-+ <DisTube>#playCustomPlaylist(..., { skip: true })
+- <DisTune>#playCustomPlaylist(..., true)
++ <DisTune>#playCustomPlaylist(..., { skip: true })
 ```
 
-#### DisTube#setFilter
+#### DisTune#setFilter
 
 `#setFilter` now supports applying multiple filters in a single Queue
 
 ```js
 // No filter applied
-distube.setFilter(message, "3d");
+DisTune.setFilter(message, "3d");
 // Applied filters: 3d
-distube.setFilter(message, ["3d", "bassboost", "vaporwave"]);
+DisTune.setFilter(message, ["3d", "bassboost", "vaporwave"]);
 // Applied filters: bassboost, vaporwave
-distube.setFilter(message, ["3d", "bassboost", "vaporwave"], true);
+DisTune.setFilter(message, ["3d", "bassboost", "vaporwave"], true);
 // Applied filters: 3d, bassboost, vaporwave
-distube.setFilter(message, false);
+DisTune.setFilter(message, false);
 // No filter applied
 ```
 
-#### DisTube#search
+#### DisTune#search
 
 Add `options` parameter to change limit, type and restricted mode of the results
 
 ```js
-distube.search("A query", {
+DisTune.search("A query", {
   limit: 10,
   type: "video",
   safeSearch: false,
@@ -319,9 +319,9 @@ distube.search("A query", {
 
 New methods on v3:
 
-- [playVoiceChannel](https://distube.js.org/#/docs/DisTube/v3/class/DisTube?scrollTo=playVoiceChannel)
-- [addRelatedSong](https://distube.js.org/#/docs/DisTube/v3/class/DisTube?scrollTo=addRelatedSong)
-- [previous](https://distube.js.org/#/docs/DisTube/v3/class/DisTube?scrollTo=previous)
+- [playVoiceChannel](https://DisTune.js.org/#/docs/DisTune/v3/class/DisTune?scrollTo=playVoiceChannel)
+- [addRelatedSong](https://DisTune.js.org/#/docs/DisTune/v3/class/DisTune?scrollTo=addRelatedSong)
+- [previous](https://DisTune.js.org/#/docs/DisTune/v3/class/DisTune?scrollTo=previous)
 
 Click above links and read the docs for more information.
 
@@ -329,16 +329,16 @@ Click above links and read the docs for more information.
 
 ### Voice Management
 
-Because v3 is built on `@discordjs/voice`, you **MUST NOT** use built-in voice system on discord.js v12, or DisTube cannot work as expected. On discord.js v13, you can use `@discordjs/voice` functions to manage your voice functions but I highly recommend using `DisTubeVoiceManager` instead.
+Because v3 is built on `@discordjs/voice`, you **MUST NOT** use built-in voice system on discord.js v12, or DisTune cannot work as expected. On discord.js v13, you can use `@discordjs/voice` functions to manage your voice functions but I highly recommend using `DisTuneVoiceManager` instead.
 
 ```diff
 - <VoiceChannel>#join() // djs v12
 - joinVoiceChannel(...) // @discordjs/voice
-+ <DisTubeVoiceManager>#join(<VoiceChannel>)
++ <DisTuneVoiceManager>#join(<VoiceChannel>)
 
 - <VoiceChannel>#leave() // djs v12
 - <VoiceConnection>#destroy() // @discordjs/voice
-+ <DisTubeVoiceManager>#leave(<GuildIDResolvable>)
++ <DisTuneVoiceManager>#leave(<GuildIDResolvable>)
 ```
 
 Example:
@@ -346,27 +346,27 @@ Example:
 ```diff
 - message.member.voice.channel.join() // djs v12
 - joinVoiceChannel(...) // @discordjs/voice
-+ distube.voices.join(message.member.voice.channel)
++ DisTune.voices.join(message.member.voice.channel)
 
 - message.member.voice.channel.leave() // djs v12
 - getVoiceConnection(...).destroy() // @discordjs/voice
-+ distube.voices.leave(message)
++ DisTune.voices.leave(message)
 ```
 
-### DisTubeVoice
+### DisTuneVoice
 
-`<DisTubeVoiceManager>.join()` returns `DisTubeVoice` to manage the voice connection instead of discord.js' `VoiceConnection`. `DisTubeVoice` is created to make you manage your voice easier and not to use complicated `@discordjs/voice` stuff.
+`<DisTuneVoiceManager>.join()` returns `DisTuneVoice` to manage the voice connection instead of discord.js' `VoiceConnection`. `DisTuneVoice` is created to make you manage your voice easier and not to use complicated `@discordjs/voice` stuff.
 
 ```diff
 - <VoiceChannel>#leave() // djs v12
 - <VoiceConnection>#destroy() // @discordjs/voice
-+ <DisTubeVoice>#leave()
++ <DisTuneVoice>#leave()
 
 - <VoiceState>#setSelfMute(boolean)
-+ <DisTubeVoice>#setSelfMute(boolean)
++ <DisTuneVoice>#setSelfMute(boolean)
 
 - <VoiceState>#setSelfDeaf(boolean)
-+ <DisTubeVoice>#setSelfDeaf(boolean)
++ <DisTuneVoice>#setSelfDeaf(boolean)
 ```
 
 Example:
@@ -374,35 +374,35 @@ Example:
 ```diff
 - message.member.voice.channel.leave() // djs v12
 - getVoiceConnection(...).destroy() // @discordjs/voice
-+ distube.voices.get(message).leave()
++ DisTune.voices.get(message).leave()
 
 - message.guild.me.voice.setSelfMute(true) // djs v12
 - joinVoiceChannel({..., selfMute: true}) // @discordjs/voice
-+ distube.voices.get(message).setSelfMute(true)
++ DisTune.voices.get(message).setSelfMute(true)
 
 - message.guild.me.voice.setSelfDeaf(true) // djs v12
 - joinVoiceChannel({..., selfDeaf: true}) // @discordjs/voice
-+ distube.voices.get(message).setSelfDeaf(true)
++ DisTune.voices.get(message).setSelfDeaf(true)
 ```
 
-## DisTubeOptions
+## DisTuneOptions
 
 ### Changes
 
-#### DisTubeOptions#searchSongs
+#### DisTuneOptions#searchSongs
 
 `searchSongs` now require a `number` instead of `boolean`. `searchResults` event will emit the number of results based on this option.
 
 ```diff
-- new DisTube({ searchSongs: true })
-+ new DisTube({ searchSongs: 10 })
+- new DisTune({ searchSongs: true })
++ new DisTune({ searchSongs: 10 })
 
-- new DisTube({ searchSongs: false })
-+ new DisTube({ searchSongs: 0 }) // or searchSongs: 1
+- new DisTune({ searchSongs: false })
++ new DisTune({ searchSongs: 0 }) // or searchSongs: 1
 ```
 
 ### Additions
 
 New options on v3: `#plugins`, `#savePreviousSongs`, `#ytdlOptions`, `#searchCooldown`, `#emptyCooldown`, `#nsfw`, `#emitAddSongWhenCreatingQueue`, and `#emitAddListWhenCreatingQueue`.
 
-You can check the feature of those options in the [DisTubeOptions](https://distube.js.org/#/docs/DisTube/v3/typedef/DisTubeOptions) documentation.
+You can check the feature of those options in the [DisTuneOptions](https://DisTune.js.org/#/docs/DisTune/v3/typedef/DisTuneOptions) documentation.

@@ -1,6 +1,6 @@
 import { Constants } from "discord.js";
 import { TypedEmitter } from "tiny-typed-emitter";
-import { DisTubeError, checkEncryptionLibraries, isSupportedVoiceChannel } from "..";
+import { DisTuneError, checkEncryptionLibraries, isSupportedVoiceChannel } from "..";
 import {
   AudioPlayerStatus,
   VoiceConnectionDisconnectReason,
@@ -11,23 +11,23 @@ import {
 } from "@discordjs/voice";
 import type { AudioPlayer, VoiceConnection } from "@discordjs/voice";
 import type { Snowflake, VoiceBasedChannel, VoiceState } from "discord.js";
-import type { DisTubeStream, DisTubeVoiceEvents, DisTubeVoiceManager } from "..";
+import type { DisTuneStream, DisTuneVoiceEvents, DisTuneVoiceManager } from "..";
 
 /**
  * Create a voice connection to the voice channel
  */
-export class DisTubeVoice extends TypedEmitter<DisTubeVoiceEvents> {
+export class DisTuneVoice extends TypedEmitter<DisTuneVoiceEvents> {
   readonly id: Snowflake;
-  readonly voices: DisTubeVoiceManager;
+  readonly voices: DisTuneVoiceManager;
   readonly audioPlayer: AudioPlayer;
   connection!: VoiceConnection;
   emittedError!: boolean;
   isDisconnected = false;
-  stream?: DisTubeStream;
-  pausingStream?: DisTubeStream;
+  stream?: DisTuneStream;
+  pausingStream?: DisTuneStream;
   #channel!: VoiceBasedChannel;
   #volume = 100;
-  constructor(voiceManager: DisTubeVoiceManager, channel: VoiceBasedChannel) {
+  constructor(voiceManager: DisTuneVoiceManager, channel: VoiceBasedChannel) {
     super();
     /**
      * The voice manager that instantiated this connection
@@ -69,7 +69,7 @@ export class DisTubeVoice extends TypedEmitter<DisTubeVoiceEvents> {
           ).unref();
         } else if (this.connection.state.status !== VoiceConnectionStatus.Destroyed) {
           // Leave after 5 attempts
-          this.leave(new DisTubeError("VOICE_RECONNECT_FAILED"));
+          this.leave(new DisTuneError("VOICE_RECONNECT_FAILED"));
         }
       })
       .on(VoiceConnectionStatus.Destroyed, () => {
@@ -99,14 +99,14 @@ export class DisTubeVoice extends TypedEmitter<DisTubeVoiceEvents> {
   }
   set channel(channel: VoiceBasedChannel) {
     if (!isSupportedVoiceChannel(channel)) {
-      throw new DisTubeError("INVALID_TYPE", "BaseGuildVoiceChannel", channel, "DisTubeVoice#channel");
+      throw new DisTuneError("INVALID_TYPE", "BaseGuildVoiceChannel", channel, "DisTuneVoice#channel");
     }
-    if (channel.guildId !== this.id) throw new DisTubeError("VOICE_DIFFERENT_GUILD");
-    if (channel.client.user?.id !== this.voices.client.user?.id) throw new DisTubeError("VOICE_DIFFERENT_CLIENT");
+    if (channel.guildId !== this.id) throw new DisTuneError("VOICE_DIFFERENT_GUILD");
+    if (channel.client.user?.id !== this.voices.client.user?.id) throw new DisTuneError("VOICE_DIFFERENT_CLIENT");
     if (channel.id === this.channelId) return;
     if (!channel.joinable) {
-      if (channel.full) throw new DisTubeError("VOICE_FULL");
-      else throw new DisTubeError("VOICE_MISSING_PERMS");
+      if (channel.full) throw new DisTuneError("VOICE_FULL");
+      else throw new DisTuneError("VOICE_MISSING_PERMS");
     }
     this.connection = this.#join(channel);
     this.#channel = channel;
@@ -123,7 +123,7 @@ export class DisTubeVoice extends TypedEmitter<DisTubeVoiceEvents> {
    * Join a voice channel with this connection
    * @param channel - A voice channel
    */
-  async join(channel?: VoiceBasedChannel): Promise<DisTubeVoice> {
+  async join(channel?: VoiceBasedChannel): Promise<DisTuneVoice> {
     const TIMEOUT = 30e3;
     if (channel) this.channel = channel;
     try {
@@ -132,7 +132,7 @@ export class DisTubeVoice extends TypedEmitter<DisTubeVoiceEvents> {
       if (this.connection.state.status === VoiceConnectionStatus.Ready) return this;
       if (this.connection.state.status !== VoiceConnectionStatus.Destroyed) this.connection.destroy();
       this.voices.remove(this.id);
-      throw new DisTubeError("VOICE_CONNECT_FAILED", TIMEOUT / 1e3);
+      throw new DisTuneError("VOICE_CONNECT_FAILED", TIMEOUT / 1e3);
     }
     return this;
   }
@@ -151,20 +151,20 @@ export class DisTubeVoice extends TypedEmitter<DisTubeVoiceEvents> {
   }
   /**
    * Stop the playing stream
-   * @param force - If true, will force the {@link DisTubeVoice#audioPlayer} to enter the Idle state even
-   *                if the {@link DisTubeStream#audioResource} has silence padding frames.
+   * @param force - If true, will force the {@link DisTuneVoice#audioPlayer} to enter the Idle state even
+   *                if the {@link DisTuneStream#audioResource} has silence padding frames.
    */
   stop(force = false) {
     this.audioPlayer.stop(force);
   }
   /**
-   * Play a {@link DisTubeStream}
-   * @param dtStream - DisTubeStream
+   * Play a {@link DisTuneStream}
+   * @param dtStream - DisTuneStream
    */
-  async play(dtStream: DisTubeStream) {
+  async play(dtStream: DisTuneStream) {
     if (!(await checkEncryptionLibraries())) {
       dtStream.kill();
-      throw new DisTubeError("ENCRYPTION_LIBRARIES_MISSING");
+      throw new DisTuneError("ENCRYPTION_LIBRARIES_MISSING");
     }
     this.emittedError = false;
     dtStream.on("error", (error: NodeJS.ErrnoException) => {
@@ -184,10 +184,10 @@ export class DisTubeVoice extends TypedEmitter<DisTubeVoiceEvents> {
   }
   set volume(volume: number) {
     if (typeof volume !== "number" || isNaN(volume)) {
-      throw new DisTubeError("INVALID_TYPE", "number", volume, "volume");
+      throw new DisTuneError("INVALID_TYPE", "number", volume, "volume");
     }
     if (volume < 0) {
-      throw new DisTubeError("NUMBER_COMPARE", "Volume", "bigger or equal to", 0);
+      throw new DisTuneError("NUMBER_COMPARE", "Volume", "bigger or equal to", 0);
     }
     this.#volume = volume;
     this.stream?.setVolume(Math.pow(this.#volume / 100, 0.5 / Math.log10(2)));
@@ -238,7 +238,7 @@ export class DisTubeVoice extends TypedEmitter<DisTubeVoiceEvents> {
    */
   setSelfDeaf(selfDeaf: boolean): boolean {
     if (typeof selfDeaf !== "boolean") {
-      throw new DisTubeError("INVALID_TYPE", "boolean", selfDeaf, "selfDeaf");
+      throw new DisTuneError("INVALID_TYPE", "boolean", selfDeaf, "selfDeaf");
     }
     return this.connection.rejoin({
       ...this.connection.joinConfig,
@@ -252,7 +252,7 @@ export class DisTubeVoice extends TypedEmitter<DisTubeVoiceEvents> {
    */
   setSelfMute(selfMute: boolean): boolean {
     if (typeof selfMute !== "boolean") {
-      throw new DisTubeError("INVALID_TYPE", "boolean", selfMute, "selfMute");
+      throw new DisTuneError("INVALID_TYPE", "boolean", selfMute, "selfMute");
     }
     return this.connection.rejoin({
       ...this.connection.joinConfig,

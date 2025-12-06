@@ -1,10 +1,10 @@
-import { DisTubeBase } from "..";
+import { DisTuneBase } from "..";
 import { Collection } from "discord.js";
 
 /**
  * Manages the collection of a data model.
  */
-export abstract class BaseManager<V> extends DisTubeBase {
+export abstract class BaseManager<V> extends DisTuneBase {
   /**
    * The collection of items for this manager.
    */

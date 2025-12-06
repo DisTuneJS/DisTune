@@ -32,18 +32,18 @@
     "isolatedModules": true
   },
   "typedocOptions": {
-    "name": "DisTube API Documentation",
+    "name": "DisTune API Documentation",
     "plugin": ["typedoc-material-theme", "typedoc-plugin-extras"],
     "themeColor": "#ED4245",
     "entryPoints": ["src/index.ts"],
     "out": "docs",
     "sidebarLinks": {
-      "GitHub": "https://github.com/skick1234/DisTube",
+      "GitHub": "https://github.com/DisTuneJS/DisTune",
       "Discord": "https://discord.gg/feaDd9h",
-      "Guide": "https://github.com/skick1234/DisTube/wiki"
+      "Guide": "https://github.com/DisTuneJS/DisTune/wiki"
     },
-    "hostedBaseUrl": "https://distube.js.org",
-    "favicon": "https://raw.githubusercontent.com/skick1234/cdn/refs/heads/main/DisTube/img/favicon.png",
+    "hostedBaseUrl": "https://distune.js.org",
+    "favicon": "https://raw.githubusercontent.com/DisTuneJS/cdn/refs/heads/main/DisTune/img/favicon.png",
     "customDescription": "A powerful Discord.js module for simplifying music commands and effortless playback of various sources with integrated audio filters."
   }
 }

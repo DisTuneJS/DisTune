@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { DisTubeError, FilterManager, defaultFilters } from "@";
+import { DisTuneError, FilterManager, defaultFilters } from "@";
 import type { FilterResolvable, Queue } from "@";
 
 const play = vi.fn();
-const queue = <Queue>(<unknown>{ distube: { filters: defaultFilters }, play });
+const queue = <Queue>(<unknown>{ distune: { filters: defaultFilters }, play });
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -93,10 +93,10 @@ describe("FilterManager#add()", () => {
   });
   test("Add an invalid filter", () => {
     expect(() => filters.add(["invalid"])).toThrow(
-      new DisTubeError("INVALID_TYPE", "FilterResolvable", "invalid", "filter"),
+      new DisTuneError("INVALID_TYPE", "FilterResolvable", "invalid", "filter"),
     );
     expect(() => filters.add({ name: "invalid", value: 1 } as any)).toThrow(
-      new DisTubeError("INVALID_TYPE", "FilterResolvable", { name: "invalid", value: 1 }, "filter"),
+      new DisTuneError("INVALID_TYPE", "FilterResolvable", { name: "invalid", value: 1 }, "filter"),
     );
     expect(play).toHaveBeenCalledTimes(0);
   });
@@ -174,10 +174,10 @@ describe("FilterManager#set()", () => {
   });
   test("Set with invalid arguments", () => {
     expect(() => filters.set(<any>{ name: "invalid", value: 1 })).toThrow(
-      new DisTubeError("INVALID_TYPE", "Array<FilterResolvable>", { name: "invalid", value: 1 }, "filters"),
+      new DisTuneError("INVALID_TYPE", "Array<FilterResolvable>", { name: "invalid", value: 1 }, "filters"),
     );
     expect(() => filters.set(<any>0)).toThrow(
-      new DisTubeError("INVALID_TYPE", "Array<FilterResolvable>", 0, "filters"),
+      new DisTuneError("INVALID_TYPE", "Array<FilterResolvable>", 0, "filters"),
     );
     expect(play).toHaveBeenCalledTimes(0);
   });

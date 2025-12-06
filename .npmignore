@@ -1,0 +1,36 @@
+# Source files
+src/
+tests/
+wiki/
+
+# Config files
+tsconfig.json
+tsconfig.eslint.json
+tsup.config.ts
+vitest.config.mts
+.eslintrc.json
+.eslintignore
+.prettierrc.json
+.prettierignore
+.editorconfig
+.commitlintrc.json
+.codecov.yml
+.deepsource.toml
+
+# Git files
+.git
+.gitignore
+.gitattributes
+.github/
+
+# Build tools
+.husky/
+node_modules/
+
+# Misc
+*.log
+*.tgz
+.DS_Store
+coverage/
+.vscode/
+.idea/

@@ -1,14 +1,14 @@
-import { DisTubeBase } from ".";
+import { DisTuneBase } from ".";
 import { request } from "undici";
-import { DisTubeError, Playlist, PluginType, Song, isURL } from "..";
-import type { DisTubePlugin, ResolveOptions } from "..";
+import { DisTuneError, Playlist, PluginType, Song, isURL } from "..";
+import type { DisTunePlugin, ResolveOptions } from "..";
 
 const REDIRECT_CODES = new Set([301, 302, 303, 307, 308]);
 
 /**
- * DisTube's Handler
+ * DisTune's Handler
  */
-export class DisTubeHandler extends DisTubeBase {
+export class DisTuneHandler extends DisTuneBase {
   resolve<T = unknown>(song: Song<T>, options?: Omit<ResolveOptions, "metadata">): Promise<Song<T>>;
   resolve<T = unknown>(song: Playlist<T>, options?: Omit<ResolveOptions, "metadata">): Promise<Playlist<T>>;
   resolve<T = unknown>(song: string, options?: ResolveOptions<T>): Promise<Song<T> | Playlist<T>>;
@@ -17,7 +17,7 @@ export class DisTubeHandler extends DisTubeBase {
   resolve(song: string | Song | Playlist, options?: ResolveOptions): Promise<Song | Playlist>;
   /**
    * Resolve a url or a supported object to a {@link Song} or {@link Playlist}
-   * @throws {@link DisTubeError}
+   * @throws {@link DisTuneError}
    * @param input   - Resolvable input
    * @param options - Optional options
    * @returns Resolved
@@ -33,7 +33,7 @@ export class DisTubeHandler extends DisTubeBase {
         const plugin =
           (await this._getPluginFromURL(input)) ||
           (await this._getPluginFromURL((input = await this.followRedirectLink(input))));
-        if (!plugin) throw new DisTubeError("NOT_SUPPORTED_URL");
+        if (!plugin) throw new DisTuneError("NOT_SUPPORTED_URL");
         this.debug(`[${plugin.constructor.name}] Resolving from url: ${input}`);
         return plugin.resolve(input, options);
       }
@@ -41,33 +41,33 @@ export class DisTubeHandler extends DisTubeBase {
         const song = await this.#searchSong(input, options);
         if (song) return song;
       } catch {
-        throw new DisTubeError("NO_RESULT", input);
+        throw new DisTuneError("NO_RESULT", input);
       }
     }
-    throw new DisTubeError("CANNOT_RESOLVE_SONG", input);
+    throw new DisTuneError("CANNOT_RESOLVE_SONG", input);
   }
 
-  async _getPluginFromURL(url: string): Promise<DisTubePlugin | null> {
+  async _getPluginFromURL(url: string): Promise<DisTunePlugin | null> {
     for (const plugin of this.plugins) if (await plugin.validate(url)) return plugin;
     return null;
   }
 
-  _getPluginFromSong(song: Song): Promise<DisTubePlugin | null>;
+  _getPluginFromSong(song: Song): Promise<DisTunePlugin | null>;
   _getPluginFromSong<T extends PluginType>(
     song: Song,
     types: T[],
     validate?: boolean,
-  ): Promise<(DisTubePlugin & { type: T }) | null>;
+  ): Promise<(DisTunePlugin & { type: T }) | null>;
   async _getPluginFromSong<T extends PluginType>(
     song: Song,
     types?: T[],
     validate = true,
-  ): Promise<(DisTubePlugin & { type: T }) | null> {
-    if (!types || types.includes(<T>song.plugin?.type)) return song.plugin as DisTubePlugin & { type: T };
+  ): Promise<(DisTunePlugin & { type: T }) | null> {
+    if (!types || types.includes(<T>song.plugin?.type)) return song.plugin as DisTunePlugin & { type: T };
     if (!song.url) return null;
     for (const plugin of this.plugins) {
       if ((!types || types.includes(<T>plugin?.type)) && (!validate || (await plugin.validate(song.url)))) {
-        return plugin as DisTubePlugin & { type: T };
+        return plugin as DisTunePlugin & { type: T };
       }
     }
     return null;
@@ -75,7 +75,7 @@ export class DisTubeHandler extends DisTubeBase {
 
   async #searchSong(query: string, options: ResolveOptions = {}, getStreamURL = false): Promise<Song | null> {
     const plugins = this.plugins.filter(p => p.type === PluginType.EXTRACTOR);
-    if (!plugins.length) throw new DisTubeError("NO_EXTRACTOR_PLUGIN");
+    if (!plugins.length) throw new DisTuneError("NO_EXTRACTOR_PLUGIN");
     for (const plugin of plugins) {
       this.debug(`[${plugin.constructor.name}] Searching for song: ${query}`);
       const result = await plugin.searchSong(query, options);
@@ -94,22 +94,22 @@ export class DisTubeHandler extends DisTubeBase {
   async attachStreamInfo(song: Song) {
     if (song.stream.playFromSource) {
       if (song.stream.url) return;
-      this.debug(`[DisTubeHandler] Getting stream info: ${song}`);
+      this.debug(`[DisTuneHandler] Getting stream info: ${song}`);
       const plugin = await this._getPluginFromSong(song, [PluginType.EXTRACTOR, PluginType.PLAYABLE_EXTRACTOR]);
-      if (!plugin) throw new DisTubeError("NOT_SUPPORTED_SONG", song.toString());
+      if (!plugin) throw new DisTuneError("NOT_SUPPORTED_SONG", song.toString());
       this.debug(`[${plugin.constructor.name}] Getting stream URL: ${song}`);
       song.stream.url = await plugin.getStreamURL(song);
-      if (!song.stream.url) throw new DisTubeError("CANNOT_GET_STREAM_URL", song.toString());
+      if (!song.stream.url) throw new DisTuneError("CANNOT_GET_STREAM_URL", song.toString());
     } else {
       if (song.stream.song?.stream?.playFromSource && song.stream.song.stream.url) return;
-      this.debug(`[DisTubeHandler] Getting stream info: ${song}`);
+      this.debug(`[DisTuneHandler] Getting stream info: ${song}`);
       const plugin = await this._getPluginFromSong(song, [PluginType.INFO_EXTRACTOR]);
-      if (!plugin) throw new DisTubeError("NOT_SUPPORTED_SONG", song.toString());
+      if (!plugin) throw new DisTuneError("NOT_SUPPORTED_SONG", song.toString());
       this.debug(`[${plugin.constructor.name}] Creating search query for: ${song}`);
       const query = await plugin.createSearchQuery(song);
-      if (!query) throw new DisTubeError("CANNOT_GET_SEARCH_QUERY", song.toString());
+      if (!query) throw new DisTuneError("CANNOT_GET_SEARCH_QUERY", song.toString());
       const altSong = await this.#searchSong(query, { metadata: song.metadata, member: song.member }, true);
-      if (!altSong || !altSong.stream.playFromSource) throw new DisTubeError("NO_RESULT", query || song.toString());
+      if (!altSong || !altSong.stream.playFromSource) throw new DisTuneError("NO_RESULT", query || song.toString());
       song.stream.song = altSong;
     }
   }

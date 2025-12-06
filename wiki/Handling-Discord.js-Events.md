@@ -3,7 +3,7 @@ There are a few ways to handle discord.js events
 ## Leave the voice channel if there is no user in it
 
 ```ts
-import { isVoiceChannelEmpty } from "distube";
+import { isVoiceChannelEmpty } from "DisTune";
 client.on("voiceStateUpdate", oldState => {
   if (!oldState?.channel) return;
   const voice = this.voices.get(oldState);
@@ -16,7 +16,7 @@ client.on("voiceStateUpdate", oldState => {
 ## Pause the queue if there is no user in the voice channel and resume it if there is
 
 ```ts
-import { isVoiceChannelEmpty } from "distube";
+import { isVoiceChannelEmpty } from "DisTune";
 client.on("voiceStateUpdate", oldState => {
   if (!oldState?.channel) return;
   const queue = this.queues.get(oldState);

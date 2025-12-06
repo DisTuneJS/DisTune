@@ -31,10 +31,10 @@ jobs:
       - name: Checkout docs branch
         uses: actions/checkout@v4
         with:
-          repository: distubejs/distubejs.github.io
+          repository: distunejs/distunejs.github.io
           ref: gh-pages
           path: gh-pages
-          token: ${{ secrets.DISTUBE_TOKEN }}
+          token: ${{ secrets.DISTUNE_TOKEN }}
 
       - name: Delete old docs
         run: find gh-pages -mindepth 1 ! -regex 'gh-pages/\.git.*' ! -name 'CNAME' -exec rm -rf {} +

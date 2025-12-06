@@ -1,4 +1,4 @@
-[Documentation](https://distube.js.org) -
+[Documentation](https://DisTune.js.org) -
 [FAQ](https://discord.gg/feaDd9h) -
 [Discord Support Server](https://discord.gg/feaDd9h)
 

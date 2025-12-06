@@ -1,5 +1,5 @@
 import { BaseManager } from ".";
-import { DisTubeError } from "../..";
+import { DisTuneError } from "../..";
 import type { FFmpegArg as FFmpegArgsValue, Filter, FilterResolvable, Queue } from "../..";
 
 /**
@@ -11,7 +11,7 @@ export class FilterManager extends BaseManager<Filter> {
    */
   queue: Queue;
   constructor(queue: Queue) {
-    super(queue.distube);
+    super(queue.distune);
     this.queue = queue;
   }
 
@@ -19,13 +19,13 @@ export class FilterManager extends BaseManager<Filter> {
     if (typeof filter === "object" && typeof filter.name === "string" && typeof filter.value === "string") {
       return filter;
     }
-    if (typeof filter === "string" && Object.prototype.hasOwnProperty.call(this.distube.filters, filter)) {
+    if (typeof filter === "string" && Object.prototype.hasOwnProperty.call(this.distune.filters, filter)) {
       return {
         name: filter,
-        value: this.distube.filters[filter],
+        value: this.distune.filters[filter],
       };
     }
-    throw new DisTubeError("INVALID_TYPE", "FilterResolvable", filter, "filter");
+    throw new DisTuneError("INVALID_TYPE", "FilterResolvable", filter, "filter");
   }
 
   #apply() {
@@ -64,7 +64,7 @@ export class FilterManager extends BaseManager<Filter> {
    * @param filters - The filters to apply
    */
   set(filters: FilterResolvable[]) {
-    if (!Array.isArray(filters)) throw new DisTubeError("INVALID_TYPE", "Array<FilterResolvable>", filters, "filters");
+    if (!Array.isArray(filters)) throw new DisTuneError("INVALID_TYPE", "Array<FilterResolvable>", filters, "filters");
     this.collection.clear();
     for (const f of filters) {
       const filter = this.#resolve(f);

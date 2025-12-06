@@ -1,8 +1,8 @@
 import { TypedEmitter } from "tiny-typed-emitter";
 import {
-  DisTubeError,
-  DisTubeHandler,
-  DisTubeVoiceManager,
+  DisTuneError,
+  DisTuneHandler,
+  DisTuneVoiceManager,
   Events,
   Options,
   Playlist,
@@ -24,30 +24,30 @@ import type { Client, VoiceBasedChannel } from "discord.js";
 import type {
   Awaitable,
   CustomPlaylistOptions,
-  DisTubeOptions,
-  DisTubePlugin,
+  DisTuneOptions,
+  DisTunePlugin,
   Filters,
   GuildIdResolvable,
   PlayOptions,
   Queue,
   RepeatMode,
-  TypedDisTubeEvents,
+  TypedDisTuneEvents,
 } from ".";
 
 /**
- * DisTube class
+ * DisTune class
  */
-export class DisTube extends TypedEmitter<TypedDisTubeEvents> {
+export class DisTune extends TypedEmitter<TypedDisTuneEvents> {
   /**
    * @event
-   * Emitted after DisTube add a new playlist to the playing {@link Queue}.
+   * Emitted after DisTune add a new playlist to the playing {@link Queue}.
    * @param queue    - The guild queue
    * @param playlist - Playlist info
    */
   static readonly [Events.ADD_LIST]: (queue: Queue, playlist: Playlist) => Awaitable;
   /**
    * @event
-   * Emitted after DisTube add a new song to the playing {@link Queue}.
+   * Emitted after DisTune add a new song to the playing {@link Queue}.
    * @param queue - The guild queue
    * @param song  - Added song
    */
@@ -66,7 +66,7 @@ export class DisTube extends TypedEmitter<TypedDisTubeEvents> {
   static readonly [Events.DISCONNECT]: (queue: Queue) => Awaitable;
   /**
    * @event
-   * Emitted when DisTube encounters an error while playing songs.
+   * Emitted when DisTune encounters an error while playing songs.
    * @param error   - error
    * @param queue   - The queue encountered the error
    * @param song    - The playing song when encountered the error
@@ -80,7 +80,7 @@ export class DisTube extends TypedEmitter<TypedDisTubeEvents> {
   static readonly [Events.FFMPEG_DEBUG]: (debug: string) => Awaitable;
   /**
    * @event
-   * Emitted to provide debug information from DisTube's operation.
+   * Emitted to provide debug information from DisTune's operation.
    * Useful for troubleshooting or logging purposes.
    *
    * @param debug - Debug message string.
@@ -94,39 +94,39 @@ export class DisTube extends TypedEmitter<TypedDisTubeEvents> {
   static readonly [Events.FINISH]: (queue: Queue) => Awaitable;
   /**
    * @event
-   * Emitted when DisTube finished a song.
+   * Emitted when DisTune finished a song.
    * @param queue - The guild queue
    * @param song  - Finished song
    */
   static readonly [Events.FINISH_SONG]: (queue: Queue, song: Song) => Awaitable;
   /**
    * @event
-   * Emitted when DisTube initialize a queue to change queue default properties.
+   * Emitted when DisTune initialize a queue to change queue default properties.
    * @param queue - The guild queue
    */
   static readonly [Events.INIT_QUEUE]: (queue: Queue) => Awaitable;
   /**
    * @event
    * Emitted when {@link Queue#autoplay} is `true`, {@link Queue#songs} is empty, and
-   * DisTube cannot find related songs to play.
+   * DisTune cannot find related songs to play.
    * @param queue - The guild queue
    */
   static readonly [Events.NO_RELATED]: (queue: Queue) => Awaitable;
   /**
    * @event
-   * Emitted when DisTube play a song.
-   * If {@link DisTubeOptions}.emitNewSongOnly is `true`, this event is not emitted
+   * Emitted when DisTune play a song.
+   * If {@link DisTuneOptions}.emitNewSongOnly is `true`, this event is not emitted
    * when looping a song or next song is the previous one.
    * @param queue - The guild queue
    * @param song  - Playing song
    */
   static readonly [Events.PLAY_SONG]: (queue: Queue, song: Song) => Awaitable;
   /**
-   * DisTube internal handler
+   * DisTune internal handler
    */
-  readonly handler: DisTubeHandler;
+  readonly handler: DisTuneHandler;
   /**
-   * DisTube options
+   * DisTune options
    */
   readonly options: Options;
   /**
@@ -138,32 +138,32 @@ export class DisTube extends TypedEmitter<TypedDisTubeEvents> {
    */
   readonly queues: QueueManager;
   /**
-   * DisTube voice connections manager
+   * DisTune voice connections manager
    */
-  readonly voices: DisTubeVoiceManager;
+  readonly voices: DisTuneVoiceManager;
   /**
-   * DisTube plugins
+   * DisTune plugins
    */
-  readonly plugins: DisTubePlugin[];
+  readonly plugins: DisTunePlugin[];
   /**
-   * DisTube ffmpeg audio filters
+   * DisTune ffmpeg audio filters
    */
   readonly filters: Filters;
   /**
-   * Create a new DisTube class.
-   * @throws {@link DisTubeError}
+   * Create a new DisTune class.
+   * @throws {@link DisTuneError}
    * @param client - Discord.JS client
-   * @param opts   - Custom DisTube options
+   * @param opts   - Custom DisTune options
    */
-  constructor(client: Client, opts: DisTubeOptions = {}) {
+  constructor(client: Client, opts: DisTuneOptions = {}) {
     super();
     this.setMaxListeners(1);
-    if (!isClientInstance(client)) throw new DisTubeError("INVALID_TYPE", "Discord.Client", client, "client");
+    if (!isClientInstance(client)) throw new DisTuneError("INVALID_TYPE", "Discord.Client", client, "client");
     this.client = client;
     checkIntents(client.options);
     this.options = new Options(opts);
-    this.voices = new DisTubeVoiceManager(this);
-    this.handler = new DisTubeHandler(this);
+    this.voices = new DisTuneVoiceManager(this);
+    this.handler = new DisTuneHandler(this);
     this.queues = new QueueManager(this);
     this.filters = { ...defaultFilters, ...this.options.customFilters };
     this.plugins = [...this.options.plugins];
@@ -175,7 +175,7 @@ export class DisTube extends TypedEmitter<TypedDisTubeEvents> {
   }
 
   /**
-   * DisTube version
+   * DisTune version
    */
   get version() {
     return version;
@@ -184,9 +184,9 @@ export class DisTube extends TypedEmitter<TypedDisTubeEvents> {
   /**
    * Play / add a song or playlist from url.
    * Search and play a song (with {@link ExtractorPlugin}) if it is not a valid url.
-   * @throws {@link DisTubeError}
+   * @throws {@link DisTuneError}
    * @param voiceChannel - The channel will be joined if the bot isn't in any channels, the bot will be
-   *                       moved to this channel if {@link DisTubeOptions}.joinNewVoiceChannel is `true`
+   *                       moved to this channel if {@link DisTuneOptions}.joinNewVoiceChannel is `true`
    * @param song         - URL | Search string | {@link Song} | {@link Playlist}
    * @param options      - Optional options
    */
@@ -196,9 +196,9 @@ export class DisTube extends TypedEmitter<TypedDisTubeEvents> {
     options: PlayOptions<T> = {},
   ): Promise<void> {
     if (!isSupportedVoiceChannel(voiceChannel)) {
-      throw new DisTubeError("INVALID_TYPE", "BaseGuildVoiceChannel", voiceChannel, "voiceChannel");
+      throw new DisTuneError("INVALID_TYPE", "BaseGuildVoiceChannel", voiceChannel, "voiceChannel");
     }
-    if (!isObject(options)) throw new DisTubeError("INVALID_TYPE", "object", options, "options");
+    if (!isObject(options)) throw new DisTuneError("INVALID_TYPE", "object", options, "options");
 
     const { textChannel, member, skip, message, metadata } = {
       member: voiceChannel.guild.members.me ?? undefined,
@@ -209,13 +209,13 @@ export class DisTube extends TypedEmitter<TypedDisTubeEvents> {
     const position = Number(options.position) || (skip ? 1 : 0);
 
     if (message && !isMessageInstance(message)) {
-      throw new DisTubeError("INVALID_TYPE", ["Discord.Message", "a falsy value"], message, "options.message");
+      throw new DisTuneError("INVALID_TYPE", ["Discord.Message", "a falsy value"], message, "options.message");
     }
     if (textChannel && !isTextChannelInstance(textChannel)) {
-      throw new DisTubeError("INVALID_TYPE", "Discord.GuildTextBasedChannel", textChannel, "options.textChannel");
+      throw new DisTuneError("INVALID_TYPE", "Discord.GuildTextBasedChannel", textChannel, "options.textChannel");
     }
     if (member && !isMemberInstance(member)) {
-      throw new DisTubeError("INVALID_TYPE", "Discord.GuildMember", member, "options.member");
+      throw new DisTuneError("INVALID_TYPE", "Discord.GuildMember", member, "options.member");
     }
 
     const queue = this.getQueue(voiceChannel) || (await this.queues.create(voiceChannel, textChannel));
@@ -227,15 +227,15 @@ export class DisTube extends TypedEmitter<TypedDisTubeEvents> {
       if (resolved instanceof Playlist) {
         if (!this.options.nsfw && !isNsfw) {
           resolved.songs = resolved.songs.filter(s => !s.ageRestricted);
-          if (!resolved.songs.length) throw new DisTubeError("EMPTY_FILTERED_PLAYLIST");
+          if (!resolved.songs.length) throw new DisTuneError("EMPTY_FILTERED_PLAYLIST");
         }
-        if (!resolved.songs.length) throw new DisTubeError("EMPTY_PLAYLIST");
+        if (!resolved.songs.length) throw new DisTuneError("EMPTY_PLAYLIST");
         this.debug(`[${queue.id}] Adding playlist to queue: ${resolved.songs.length} songs`);
         queue.addToQueue(resolved.songs, position);
         if (queue.playing || this.options.emitAddListWhenCreatingQueue) this.emit(Events.ADD_LIST, queue, resolved);
       } else {
         if (!this.options.nsfw && resolved.ageRestricted && !isNsfwChannel(queue?.textChannel || textChannel)) {
-          throw new DisTubeError("NON_NSFW");
+          throw new DisTuneError("NON_NSFW");
         }
         this.debug(`[${queue.id}] Adding song to queue: ${resolved.name || resolved.url || resolved.id || resolved}`);
         queue.addToQueue(resolved, position);
@@ -245,7 +245,7 @@ export class DisTube extends TypedEmitter<TypedDisTubeEvents> {
       if (!queue.playing) await queue.play();
       else if (skip) await queue.skip();
     } catch (e: any) {
-      if (!(e instanceof DisTubeError)) {
+      if (!(e instanceof DisTuneError)) {
         this.debug(`[${queue.id}] Unexpected error while playing song: ${e.stack || e.message}`);
         try {
           e.name = "PlayError";
@@ -270,12 +270,12 @@ export class DisTube extends TypedEmitter<TypedDisTubeEvents> {
     songs: (string | Song)[],
     { member, parallel, metadata, name, source, url, thumbnail }: CustomPlaylistOptions = {},
   ): Promise<Playlist> {
-    if (!Array.isArray(songs)) throw new DisTubeError("INVALID_TYPE", "Array", songs, "songs");
-    if (!songs.length) throw new DisTubeError("EMPTY_ARRAY", "songs");
+    if (!Array.isArray(songs)) throw new DisTuneError("INVALID_TYPE", "Array", songs, "songs");
+    if (!songs.length) throw new DisTuneError("EMPTY_ARRAY", "songs");
     const filteredSongs = songs.filter(song => song instanceof Song || isURL(song));
-    if (!filteredSongs.length) throw new DisTubeError("NO_VALID_SONG");
+    if (!filteredSongs.length) throw new DisTuneError("NO_VALID_SONG");
     if (member && !isMemberInstance(member)) {
-      throw new DisTubeError("INVALID_TYPE", "Discord.Member", member, "options.member");
+      throw new DisTuneError("INVALID_TYPE", "Discord.Member", member, "options.member");
     }
     let resolvedSongs: Song[];
     if (parallel !== false) {
@@ -312,7 +312,7 @@ export class DisTube extends TypedEmitter<TypedDisTubeEvents> {
 
   #getQueue(guild: GuildIdResolvable): Queue {
     const queue = this.getQueue(guild);
-    if (!queue) throw new DisTubeError("NO_QUEUE");
+    if (!queue) throw new DisTuneError("NO_QUEUE");
     return queue;
   }
 
@@ -354,7 +354,7 @@ export class DisTube extends TypedEmitter<TypedDisTubeEvents> {
 
   /**
    * Skip the playing song if there is a next song in the queue. <info>If {@link
-   * Queue#autoplay} is `true` and there is no up next song, DisTube will add and
+   * Queue#autoplay} is `true` and there is no up next song, DisTune will add and
    * play a related song.</info>
    * @param guild - The type can be resolved to give a {@link Queue}
    * @returns The new Song will be played
@@ -452,4 +452,4 @@ export class DisTube extends TypedEmitter<TypedDisTubeEvents> {
   }
 }
 
-export default DisTube;
+export default DisTune;

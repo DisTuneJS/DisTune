@@ -15,12 +15,12 @@ const ERROR_MESSAGES = {
     `${key.map(k => `'${k}'`).join(all ? " and " : " or ")} need to be provided in ${obj}`,
 
   MISSING_INTENTS: (i: string) => `${i} intent must be provided for the Client`,
-  DISABLED_OPTION: (o: string) => `DisTubeOptions.${o} is disabled`,
-  ENABLED_OPTION: (o: string) => `DisTubeOptions.${o} is enabled`,
+  DISABLED_OPTION: (o: string) => `DisTuneOptions.${o} is disabled`,
+  ENABLED_OPTION: (o: string) => `DisTuneOptions.${o} is enabled`,
 
   NOT_IN_VOICE: "User is not in any voice channel",
   VOICE_FULL: "The voice channel is full",
-  VOICE_ALREADY_CREATED: "This guild already has a voice connection which is not managed by DisTube",
+  VOICE_ALREADY_CREATED: "This guild already has a voice connection which is not managed by DisTune",
   VOICE_CONNECT_FAILED: (s: number) => `Cannot connect to the voice channel after ${s} seconds`,
   VOICE_MISSING_PERMS: "I do not have permission to join this voice channel",
   VOICE_RECONNECT_FAILED: "Cannot reconnect to the voice channel",
@@ -42,7 +42,7 @@ const ERROR_MESSAGES = {
   NO_UP_NEXT: "There is no up next song",
   NO_SONG_POSITION: "Does not have any song at this position",
   NO_PLAYING_SONG: "There is no playing song in the queue",
-  NO_EXTRACTOR_PLUGIN: "There is no extractor plugin in the DisTubeOptions.plugins, please add one for searching songs",
+  NO_EXTRACTOR_PLUGIN: "There is no extractor plugin in the DisTuneOptions.plugins, please add one for searching songs",
   NO_RELATED: "Cannot find any related songs",
   CANNOT_PLAY_RELATED: "Cannot play the related song",
   UNAVAILABLE_VIDEO: "This video is unavailable",
@@ -61,6 +61,7 @@ const ERROR_MESSAGES = {
     "There is no valid video in the playlist\n" +
     "Maybe age-restricted contents is filtered because you are in non-NSFW channel",
   EMPTY_PLAYLIST: "There is no valid video in the playlist",
+  EMPTY_ALBUM: "There is no valid song in the album",
 };
 
 type ErrorMessage = typeof ERROR_MESSAGES;
@@ -72,7 +73,7 @@ const haveCode = (code: string): code is ErrorCode => Object.keys(ERROR_MESSAGES
 const parseMessage = (m: string | ((...x: any) => string), ...args: any) => (typeof m === "string" ? m : m(...args));
 const getErrorMessage = (code: string, ...args: any): string =>
   haveCode(code) ? parseMessage(ERROR_MESSAGES[code], ...args) : args[0];
-export class DisTubeError<T extends string = any> extends Error {
+export class DisTuneError<T extends string = any> extends Error {
   errorCode: string;
   constructor(code: T extends StaticErrorCode ? T : never);
   constructor(code: T extends TemplateErrorCode ? T : never, ...args: Parameters<ErrorMessage[typeof code]>);
@@ -82,11 +83,11 @@ export class DisTubeError<T extends string = any> extends Error {
     super(getErrorMessage(code, ...args));
 
     this.errorCode = code;
-    if (Error.captureStackTrace) Error.captureStackTrace(this, DisTubeError);
+    if (Error.captureStackTrace) Error.captureStackTrace(this, DisTuneError);
   }
 
   override get name() {
-    return `DisTubeError [${this.errorCode}]`;
+    return `DisTuneError [${this.errorCode}]`;
   }
 
   get code() {

@@ -12,10 +12,10 @@
 - Copy the content of the exported file and paste it into your code.
 
 ```ts
-import { DisTube } from "distube";
-import { YouTubePlugin } from "@distube/youtube";
+import { DisTune } from "@distune/core";
+import { YouTubePlugin } from "@DisTune/youtube";
 
-const distube = new DisTube({
+const distune = new DisTune({
   plugins: [
     new YouTubePlugin({
       cookies: [
@@ -44,10 +44,10 @@ const distube = new DisTube({
 - Or you can paste it into a file and use `fs.readFileSync` to read it.
 
 ```js
-const { DisTube } = require("distube");
+const { DisTune } = require("@distune/core");
 const fs = require("fs");
 
-const distube = new DisTube({
+const distune = new DisTune({
   plugins: [new YouTubePlugin({ cookies: JSON.parse(fs.readFileSync("cookies.json")) })],
 });
 ```

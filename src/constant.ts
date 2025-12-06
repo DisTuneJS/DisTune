@@ -1,7 +1,7 @@
-import type { DisTubeOptions, Filters } from ".";
+import type { DisTuneOptions, Filters } from ".";
 
 /**
- * Default DisTube audio filters.
+ * Default DisTune audio filters.
  */
 export const defaultFilters: Filters = {
   "3d": "apulsator=hz=0.125",
@@ -29,4 +29,4 @@ export const defaultOptions = {
   emitAddSongWhenCreatingQueue: true,
   emitAddListWhenCreatingQueue: true,
   joinNewVoiceChannel: true,
-} satisfies DisTubeOptions;
+} satisfies DisTuneOptions;

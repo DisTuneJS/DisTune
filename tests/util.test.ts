@@ -3,8 +3,8 @@ import { expect, test, vi } from "vitest";
 import { Client, ClientUser, Guild, Message, VoiceState } from "discord.js";
 import { rawBotVoiceState, rawClientUser, rawGuild, rawMessage, rawUserVoiceState } from "./raw";
 import {
-  DisTubeError,
-  DisTubeVoice as _Voice,
+  DisTuneError,
+  DisTuneVoice as _Voice,
   checkIntents,
   checkInvalidKey,
   formatDuration,
@@ -20,7 +20,7 @@ import {
 } from "@";
 import type { Mocked } from "vitest";
 
-vi.mock("@/core/DisTubeVoice");
+vi.mock("@/core/DisTuneVoice");
 
 const Voice: Mocked<typeof _Voice> = _Voice;
 
@@ -126,9 +126,9 @@ test("resolveGuildID()", () => {
   expect(testFn(botVoiceState)).toBe(gId);
   expect(testFn(userVoiceState)).toBe(gId);
   expect(testFn(gId)).toBe(gId);
-  expect(() => testFn(client as any)).toThrow(new DisTubeError("INVALID_TYPE", "GuildIdResolvable", client));
-  expect(() => testFn(client.user as any)).toThrow(new DisTubeError("INVALID_TYPE", "GuildIdResolvable", client.user));
-  expect(() => testFn(1 as any)).toThrow(new DisTubeError("INVALID_TYPE", "GuildIdResolvable", 1));
+  expect(() => testFn(client as any)).toThrow(new DisTuneError("INVALID_TYPE", "GuildIdResolvable", client));
+  expect(() => testFn(client.user as any)).toThrow(new DisTuneError("INVALID_TYPE", "GuildIdResolvable", client.user));
+  expect(() => testFn(1 as any)).toThrow(new DisTuneError("INVALID_TYPE", "GuildIdResolvable", 1));
 });
 
 test("isClientInstance()", () => {
@@ -182,10 +182,10 @@ test("checkIntents()", () => {
   const client3 = new Client({ intents: [intent] });
   expect(() => {
     checkIntents(client1.options);
-  }).toThrow(new DisTubeError("MISSING_INTENTS", intent));
+  }).toThrow(new DisTuneError("MISSING_INTENTS", intent));
   expect(() => {
     checkIntents(client2.options);
-  }).toThrow(new DisTubeError("MISSING_INTENTS", intent));
+  }).toThrow(new DisTuneError("MISSING_INTENTS", intent));
   expect(checkIntents(client3.options)).toBeUndefined();
 });
 
@@ -199,8 +199,8 @@ test("isURL()", () => {
   expect(isURL("ftp://abc")).toBe(false);
   expect(isURL("ahihi://abc")).toBe(false);
   expect(isURL("http://localhost:1234")).toBe(true);
-  expect(isURL("https://distube.js.org/")).toBe(true);
-  expect(isURL("http://distube.js.org:433")).toBe(true);
+  expect(isURL("https://distune.js.org/")).toBe(true);
+  expect(isURL("http://distune.js.org:433")).toBe(true);
 });
 
 test("formatDuration()", () => {
@@ -222,7 +222,7 @@ test("checkInvalidKey()", () => {
     b: 1,
   };
   const name = "target";
-  expect(() => checkInvalidKey(0 as any, [], name)).toThrow(new DisTubeError("INVALID_TYPE", "object", 0, name));
+  expect(() => checkInvalidKey(0 as any, [], name)).toThrow(new DisTuneError("INVALID_TYPE", "object", 0, name));
   expect(() => checkInvalidKey(target, ["b"], name)).toThrow(`'a' does not need to be provided in ${name}`);
   expect(() => checkInvalidKey(target, { a: undefined }, name)).toThrow(`'b' does not need to be provided in ${name}`);
   expect(checkInvalidKey(target, { a: 0, b: 0, c: 0 }, name)).toBeUndefined();

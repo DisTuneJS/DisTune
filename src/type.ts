@@ -1,6 +1,6 @@
 import type {
-  DisTubeError,
-  DisTubeVoice,
+  DisTuneError,
+  DisTuneVoice,
   ExtractorPlugin,
   InfoExtractorPlugin,
   PlayableExtractorPlugin,
@@ -37,7 +37,7 @@ export enum Events {
   DEBUG = "debug",
 }
 
-export type DisTubeEvents = {
+export type DisTuneEvents = {
   [Events.ADD_LIST]: [queue: Queue, playlist: Playlist];
   [Events.ADD_SONG]: [queue: Queue, song: Song];
   [Events.DELETE_QUEUE]: [queue: Queue];
@@ -48,15 +48,15 @@ export type DisTubeEvents = {
   [Events.FINISH]: [queue: Queue];
   [Events.FINISH_SONG]: [queue: Queue, song: Song];
   [Events.INIT_QUEUE]: [queue: Queue];
-  [Events.NO_RELATED]: [queue: Queue, error: DisTubeError];
+  [Events.NO_RELATED]: [queue: Queue, error: DisTuneError];
   [Events.PLAY_SONG]: [queue: Queue, song: Song];
 };
 
-export type TypedDisTubeEvents = {
-  [K in keyof DisTubeEvents]: (...args: DisTubeEvents[K]) => Awaitable;
+export type TypedDisTuneEvents = {
+  [K in keyof DisTuneEvents]: (...args: DisTuneEvents[K]) => Awaitable;
 };
 
-export type DisTubeVoiceEvents = {
+export type DisTuneVoiceEvents = {
   disconnect: (error?: Error) => Awaitable;
   error: (error: Error) => Awaitable;
   finish: () => Awaitable;
@@ -87,7 +87,7 @@ export interface Filter {
  * - A name of a default filters or custom filters (`string`)
  * - A {@link Filter} object
  * @see {@link defaultFilters}
- * @see {@link DisTubeOptions|DisTubeOptions.customFilters}
+ * @see {@link DisTuneOptions|DisTuneOptions.customFilters}
  */
 export type FilterResolvable = string | Filter;
 
@@ -104,14 +104,14 @@ export type FilterResolvable = string | Filter;
 export type Filters = Record<string, string>;
 
 /**
- * DisTube options
+ * DisTune options
  */
-export type DisTubeOptions = {
+export type DisTuneOptions = {
   /**
-   * DisTube plugins.
+   * DisTune plugins.
    * The order of this effects the priority of the plugins when verifying the input.
    */
-  plugins?: DisTubePlugin[];
+  plugins?: DisTunePlugin[];
   /**
    * Whether or not emitting {@link Events.PLAY_SONG} event when looping a song
    * or next song is the same as the previous one
@@ -119,7 +119,7 @@ export type DisTubeOptions = {
   emitNewSongOnly?: boolean;
   /**
    * Whether or not saving the previous songs of the queue and enable {@link
-   * DisTube#previous} method. Disable it may help to reduce the memory usage
+   * DisTune#previous} method. Disable it may help to reduce the memory usage
    */
   savePreviousSongs?: boolean;
   /**
@@ -140,7 +140,7 @@ export type DisTubeOptions = {
    */
   emitAddListWhenCreatingQueue?: boolean;
   /**
-   * Whether or not joining the new voice channel when using {@link DisTube#play}
+   * Whether or not joining the new voice channel when using {@link DisTune#play}
    * method
    */
   joinNewVoiceChannel?: boolean;
@@ -174,12 +174,12 @@ export type DisTubeOptions = {
  *   GuildMember}
  * - A {@link https://discord.js.org/#/docs/main/stable/class/Interaction |
  *   Interaction}
- * - A {@link DisTubeVoice}
+ * - A {@link DisTuneVoice}
  * - A {@link Queue}
  */
 export type GuildIdResolvable =
   | Queue
-  | DisTubeVoice
+  | DisTuneVoice
   | Snowflake
   | Message
   | GuildTextBasedChannel
@@ -191,7 +191,7 @@ export type GuildIdResolvable =
   | string;
 
 export interface SongInfo {
-  plugin: DisTubePlugin | null;
+  plugin: DisTunePlugin | null;
   source: string;
   playFromSource: boolean;
   id: string;
@@ -218,6 +218,31 @@ export interface PlaylistInfo {
   name?: string;
   url?: string;
   thumbnail?: string;
+}
+
+export interface AlbumInfo {
+  source: string;
+  songs: Song[];
+  id?: string;
+  name?: string;
+  url?: string;
+  thumbnail?: string;
+  artist?: string;
+  artistId?: string;
+  year?: number;
+  genre?: string;
+}
+
+/**
+ * Search types for plugins
+ * - `SONG` = `"song"`: Search for songs
+ * - `ALBUM` = `"album"`: Search for albums
+ * - `PLAYLIST` = `"playlist"`: Search for playlists
+ */
+export enum SearchType {
+  SONG = "song",
+  ALBUM = "album",
+  PLAYLIST = "playlist",
 }
 
 export type RelatedSong = Omit<Song, "related">;
@@ -321,7 +346,7 @@ export enum PluginType {
   PLAYABLE_EXTRACTOR = "playable-extractor",
 }
 
-export type DisTubePlugin = ExtractorPlugin | InfoExtractorPlugin | PlayableExtractorPlugin;
+export type DisTunePlugin = ExtractorPlugin | InfoExtractorPlugin | PlayableExtractorPlugin;
 
 export type FFmpegArg = Record<string, string | number | boolean | Array<string | null | undefined> | null | undefined>;
 

@@ -1,11 +1,11 @@
-# DisTube
+# DisTune
 
 ## 1. Budget VPS Hosting
 
 Blazingly fast, reliable VMs in 16 global locations at an extremely affordable price!
 
 > Available locations: 🇺🇸 🇳🇱 🇸🇪 🇦🇹 🇳🇴 🇬🇧 🇨🇭 🇭🇰 🇸🇬 🇯🇵 🇦🇺\
-> Premium DisTube Bots are hosted on this provider in Chicago 🇺🇸
+> Premium DisTune Bots are hosted on this provider in Chicago 🇺🇸
 > ​
 
 ### [Order Now!](https://skick.xyz/vps)
@@ -38,7 +38,7 @@ All plans, even **4$** plan, use the below specification:
 
 - Install FFmpeg on: [Windows](http://blog.gregzaal.com/how-to-install-ffmpeg-on-windows/) - [Linux (Ubuntu, Mint,...)](https://www.tecmint.com/install-ffmpeg-in-linux/)
   > Download FFmpeg from [this repo](https://github.com/BtbN/FFmpeg-Builds/releases) if the download links are not available
-- If you want to run FFmpeg from a custom path, or `ffmpeg-static`.path, e.t.c., you can use [`ffmpeg.path`](https://distube.js.org/types/DisTubeOptions.html) option.
+- If you want to run FFmpeg from a custom path, or `ffmpeg-static`.path, e.t.c., you can use [`ffmpeg.path`](https://DisTune.js.org/types/DisTuneOptions.html) option.
 
 ## 3.1 The song ends instantly without any errors<br/>3.2 Error: write EPIPE
 
@@ -48,11 +48,11 @@ All plans, even **4$** plan, use the below specification:
 
 ### Solution:
 
-- Check the FFmpeg log to check why it happens with [`ffmpegDebug`](https://distube.js.org/classes/DisTube.html#ffmpegDebug) event
+- Check the FFmpeg log to check why it happens with [`ffmpegDebug`](https://DisTune.js.org/classes/DisTune.html#ffmpegDebug) event
 
 ```ts
-import { Events } from "distube";
-distube.on(Events.FFMPEG_DEBUG, console.log);
+import { Events } from "DisTune";
+DisTune.on(Events.FFMPEG_DEBUG, console.log);
 ```
 
 ## 4.1 Error: Cannot find module '@discordjs/opus'<br/>4.2 RangeError: Source is too large<br/>4.3 RangeError: offset is out of bounds
@@ -78,7 +78,7 @@ npm install @discordjs/opus
 
 ### Solution
 
-1. Try to join the voice channel with `<DisTube>.voices.join(voiceChannel)` before using `DisTube.play()`.\
+1. Try to join the voice channel with `<DisTune>.voices.join(voiceChannel)` before using `DisTune.play()`.\
    You can retry if this function throws the above error.
 
 2. Use a better network service (like the above VPS)
@@ -91,8 +91,8 @@ npm install @discordjs/opus
 
 ### Solution
 
-- To turn it on/off by a command, use [toggleAutoplay()](https://distube.js.org/#/docs/DisTube/main/class/DisTube?scrollTo=toggleAutoplay).
-- To change the queue's default setting, use [initQueue](https://distube.js.org/#/docs/DisTube/main/class/DisTube?scrollTo=e-initQueue) event.
+- To turn it on/off by a command, use [toggleAutoplay()](https://DisTune.js.org/#/docs/DisTune/main/class/DisTune?scrollTo=toggleAutoplay).
+- To change the queue's default setting, use [initQueue](https://DisTune.js.org/#/docs/DisTune/main/class/DisTune?scrollTo=e-initQueue) event.
 
 # YouTubePlugin
 

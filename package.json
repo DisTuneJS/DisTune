@@ -1,6 +1,6 @@
 {
-  "name": "distube",
-  "version": "5.0.7",
+  "name": "@distune/core",
+  "version": "6.0.0",
   "description": "A powerful Discord.js module for simplifying music commands and effortless playback of various sources with integrated audio filters.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -39,7 +39,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/skick1234/DisTube.git"
+    "url": "git+https://github.com/DisTuneJS/DisTune.git"
   },
   "keywords": [
     "youtube",
@@ -47,20 +47,20 @@
     "discord",
     "discordjs",
     "bot",
-    "distube",
+    "distune",
     "queue",
     "musicbot",
     "discord-music-bot",
     "music-bot",
     "discord-js"
   ],
-  "author": "Skick (https://github.com/skick1234)",
+  "author": "Simon Bråten (https://github.com/hexahigh)",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/skick1234/DisTube/issues"
+    "url": "https://github.com/DisTuneJS/DisTune/issues"
   },
-  "funding": "https://github.com/skick1234/DisTube?sponsor",
-  "homepage": "https://distube.js.org/",
+  "funding": "https://github.com/DisTuneJS/DisTune?sponsor",
+  "homepage": "https://github.com/DisTuneJS/DisTune/",
   "dependencies": {
     "tiny-typed-emitter": "^2.1.0",
     "undici": "^7.7.0"

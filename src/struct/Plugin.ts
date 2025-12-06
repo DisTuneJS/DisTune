@@ -1,7 +1,7 @@
-import type { Awaitable, DisTube, PluginType, Song } from "..";
+import type { Awaitable, DisTune, PluginType, Song } from "..";
 
 /**
- * DisTube Plugin
+ * DisTune Plugin
  */
 export abstract class Plugin {
   /**
@@ -9,11 +9,11 @@ export abstract class Plugin {
    */
   abstract readonly type: PluginType;
   /**
-   * DisTube
+   * DisTune
    */
-  distube!: DisTube;
-  init(distube: DisTube) {
-    this.distube = distube;
+  distune!: DisTune;
+  init(distune: DisTune) {
+    this.distune = distune;
   }
   /**
    * Get related songs from a supported url.

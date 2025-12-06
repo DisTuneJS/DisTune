@@ -1,9 +1,9 @@
 import { beforeEach, expect, test, vi } from "vitest";
-import { DisTubeVoiceManager, DisTubeVoice as _DTV } from "@";
+import { DisTuneVoiceManager, DisTuneVoice as _DTV } from "@";
 import { VoiceConnectionStatus, getVoiceConnection } from "@discordjs/voice";
 import type { Mock, Mocked } from "vitest";
 
-vi.mock("@/core/DisTubeVoice");
+vi.mock("@/core/DisTuneVoice");
 vi.mock(
   "@discordjs/voice",
   async importOriginal =>
@@ -21,20 +21,19 @@ vi.mock(
     },
 );
 
-const DisTubeVoice: Mocked<typeof _DTV> = _DTV;
+const DisTuneVoice: Mocked<typeof _DTV> = _DTV;
 
 beforeEach(() => {
   vi.clearAllMocks();
 });
 
-function createFakeDisTube() {
+function createFakeDisTune() {
   return {
     client: { user: { id: "123" } },
   };
 }
-
-const distube = createFakeDisTube();
-const manager = new DisTubeVoiceManager(distube as any);
+const distune = createFakeDisTune();
+const manager = new DisTuneVoiceManager(distune as any);
 const channel1: any = {
   guildId: "123456789123456789",
 };
@@ -42,20 +41,20 @@ const channel2: any = {
   guildId: "123456789012345678",
 };
 
-test("DisTubeVoiceManager#create()", () => {
+test("DisTuneVoiceManager#create()", () => {
   const voice = manager.create(channel1);
   manager.add(channel1.guildId, voice);
-  expect(DisTubeVoice).toHaveBeenCalledTimes(1);
+  expect(DisTuneVoice).toHaveBeenCalledTimes(1);
   expect(manager.get(channel1)).toBe(voice);
   const setter = vi.spyOn(voice, "channel", "set").mockImplementation(() => null);
   const existing = manager.create(channel1);
   expect(existing).toBe(voice);
-  expect(DisTubeVoice).toHaveBeenCalledTimes(1);
+  expect(DisTuneVoice).toHaveBeenCalledTimes(1);
   expect(manager.get(channel1)).toBe(voice);
   expect(setter).toHaveBeenCalledTimes(1);
 });
 
-test("DisTubeVoiceManager#join()", () => {
+test("DisTuneVoiceManager#join()", () => {
   manager.join(channel1);
   expect(manager.get(channel1).join).toHaveBeenCalledTimes(1);
   expect(manager.get(channel1).join).toHaveBeenCalledWith(channel1);
@@ -67,7 +66,7 @@ test("DisTubeVoiceManager#join()", () => {
   expect(fVoice.join).toHaveBeenCalledTimes(1);
 });
 
-test("DisTubeVoiceManager#leave()", () => {
+test("DisTuneVoiceManager#leave()", () => {
   manager.leave(channel1);
   expect(manager.get(channel1).leave).toHaveBeenCalledTimes(1);
   const fConnection = {
@@ -78,10 +77,10 @@ test("DisTubeVoiceManager#leave()", () => {
   };
   (<Mock>getVoiceConnection).mockReturnValue(fConnection);
   manager.leave(channel2);
-  expect(getVoiceConnection).toHaveBeenNthCalledWith(1, channel2.guildId, distube.client.user.id);
+  expect(getVoiceConnection).toHaveBeenNthCalledWith(1, channel2.guildId, distune.client.user.id);
   expect(fConnection.destroy).not.toHaveBeenCalled();
   fConnection.state.status = VoiceConnectionStatus.Ready;
   manager.leave(channel2);
-  expect(getVoiceConnection).toHaveBeenNthCalledWith(1, channel2.guildId, distube.client.user.id);
+  expect(getVoiceConnection).toHaveBeenNthCalledWith(1, channel2.guildId, distune.client.user.id);
   expect(fConnection.destroy).toHaveBeenCalledTimes(1);
 });

@@ -1,5 +1,5 @@
 import { URL } from "url";
-import { DisTubeError, DisTubeVoice, Queue } from ".";
+import { DisTuneError, DisTuneVoice, Queue } from ".";
 import { Constants, GatewayIntentBits, IntentsBitField, SnowflakeUtil } from "discord.js";
 import type { GuildIdResolvable } from ".";
 import type {
@@ -45,12 +45,12 @@ export function isURL(input: any): input is `${(typeof SUPPORTED_PROTOCOL)[numbe
   return true;
 }
 /**
- * Check if the Client has enough intents to using DisTube
+ * Check if the Client has enough intents to using DisTune
  * @param options - options
  */
 export function checkIntents(options: ClientOptions): void {
   const intents = options.intents instanceof IntentsBitField ? options.intents : new IntentsBitField(options.intents);
-  if (!intents.has(GatewayIntentBits.GuildVoiceStates)) throw new DisTubeError("MISSING_INTENTS", "GuildVoiceStates");
+  if (!intents.has(GatewayIntentBits.GuildVoiceStates)) throw new DisTuneError("MISSING_INTENTS", "GuildVoiceStates");
 }
 
 /**
@@ -97,7 +97,7 @@ export function isTextChannelInstance(channel: any): channel is GuildTextBasedCh
 }
 
 export function isMessageInstance(message: any): message is Message<true> {
-  // Simple check for using distube normally
+  // Simple check for using DisTune normally
   return (
     Boolean(message) &&
     isSnowflake(message.id) &&
@@ -129,13 +129,13 @@ export function resolveGuildId(resolvable: GuildIdResolvable): Snowflake {
   } else if (isObject(resolvable)) {
     if ("guildId" in resolvable && resolvable.guildId) {
       guildId = resolvable.guildId;
-    } else if (resolvable instanceof Queue || resolvable instanceof DisTubeVoice || isGuildInstance(resolvable)) {
+    } else if (resolvable instanceof Queue || resolvable instanceof DisTuneVoice || isGuildInstance(resolvable)) {
       guildId = resolvable.id;
     } else if ("guild" in resolvable && isGuildInstance(resolvable.guild)) {
       guildId = resolvable.guild.id;
     }
   }
-  if (!isSnowflake(guildId)) throw new DisTubeError("INVALID_TYPE", "GuildIdResolvable", resolvable);
+  if (!isSnowflake(guildId)) throw new DisTuneError("INVALID_TYPE", "GuildIdResolvable", resolvable);
   return guildId;
 }
 
@@ -148,10 +148,10 @@ export function checkInvalidKey(
   source: Record<string, any> | string[],
   sourceName: string,
 ) {
-  if (!isObject(target)) throw new DisTubeError("INVALID_TYPE", "object", target, sourceName);
+  if (!isObject(target)) throw new DisTuneError("INVALID_TYPE", "object", target, sourceName);
   const sourceKeys = Array.isArray(source) ? source : objectKeys(source);
   const invalidKey = objectKeys(target).find(key => !sourceKeys.includes(key));
-  if (invalidKey) throw new DisTubeError("INVALID_KEY", sourceName, invalidKey);
+  if (invalidKey) throw new DisTuneError("INVALID_KEY", sourceName, invalidKey);
 }
 
 export function isObject(obj: any): obj is object {

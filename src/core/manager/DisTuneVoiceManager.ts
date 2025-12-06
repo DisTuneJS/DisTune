@@ -1,6 +1,6 @@
 import { GuildIdManager } from ".";
-import { DisTubeVoice } from "../DisTubeVoice";
-import { DisTubeError, resolveGuildId } from "../..";
+import { DisTuneVoice } from "../DisTuneVoice";
+import { DisTuneError, resolveGuildId } from "../..";
 import { VoiceConnectionStatus, getVoiceConnection } from "@discordjs/voice";
 import type { GuildIdResolvable } from "../..";
 import type { VoiceBasedChannel } from "discord.js";
@@ -8,12 +8,12 @@ import type { VoiceBasedChannel } from "discord.js";
 /**
  * Manages voice connections
  */
-export class DisTubeVoiceManager extends GuildIdManager<DisTubeVoice> {
+export class DisTuneVoiceManager extends GuildIdManager<DisTuneVoice> {
   /**
-   * Create a {@link DisTubeVoice} instance
+   * Create a {@link DisTuneVoice} instance
    * @param channel - A voice channel to join
    */
-  create(channel: VoiceBasedChannel): DisTubeVoice {
+  create(channel: VoiceBasedChannel): DisTuneVoice {
     const existing = this.get(channel.guildId);
     if (existing) {
       existing.channel = channel;
@@ -23,15 +23,15 @@ export class DisTubeVoiceManager extends GuildIdManager<DisTubeVoice> {
       getVoiceConnection(resolveGuildId(channel), this.client.user?.id) ||
       getVoiceConnection(resolveGuildId(channel))
     ) {
-      throw new DisTubeError("VOICE_ALREADY_CREATED");
+      throw new DisTuneError("VOICE_ALREADY_CREATED");
     }
-    return new DisTubeVoice(this, channel);
+    return new DisTuneVoice(this, channel);
   }
   /**
    * Join a voice channel and wait until the connection is ready
    * @param channel - A voice channel to join
    */
-  join(channel: VoiceBasedChannel): Promise<DisTubeVoice> {
+  join(channel: VoiceBasedChannel): Promise<DisTuneVoice> {
     const existing = this.get(channel.guildId);
     if (existing) return existing.join(channel);
     return this.create(channel).join();

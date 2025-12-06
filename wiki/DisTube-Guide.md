@@ -1,14 +1,14 @@
 > [!WARNING]
-> This DisTube Guide is a work in progress.
+> This DisTune Guide is a work in progress.
 
 > [!NOTE]
 > This guide follows the [discordjs.guide notation](https://discordjs.guide/additional-info/notation.html).
 
 # Introduction
 
-Welcome to the DisTube guide! This tutorial will guide you through creating a Discord bot with music commands using DisTube, a comprehensive Discord music bot library built for Discord.js. DisTube simplifies music commands, offers effortless playback from diverse sources, and provides integrated audio filters.
+Welcome to the DisTune guide! This tutorial will guide you through creating a Discord bot with music commands using DisTune, a comprehensive Discord music bot library built for Discord.js. DisTune simplifies music commands, offers effortless playback from diverse sources, and provides integrated audio filters.
 
-Let's bring your Discord bot to life with DisTube! 🤖🎵
+Let's bring your Discord bot to life with DisTune! 🤖🎵
 
 [![Support me on ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/skick)
 
@@ -21,10 +21,10 @@ This guide assumes you're familiar with the command handling setup from [discord
 
 # Installation
 
-1.  Install DisTube and required dependencies in your bot project:
+1.  Install DisTune and required dependencies in your bot project:
 
     ```sh
-    npm install distube @discordjs/voice @discordjs/opus
+    npm install DisTune @discordjs/voice @discordjs/opus
     ```
 
 2.  Install FFmpeg. See the guides for:

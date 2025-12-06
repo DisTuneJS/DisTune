@@ -1,8 +1,8 @@
-import { DisTubeError, checkInvalidKey, defaultOptions } from "..";
-import type { DisTubeOptions, DisTubePlugin, FFmpegArgs, FFmpegOptions, Filters } from "..";
+import { DisTuneError, checkInvalidKey, defaultOptions } from "..";
+import type { DisTuneOptions, DisTunePlugin, FFmpegArgs, FFmpegOptions, Filters } from "..";
 
 export class Options {
-  plugins: DisTubePlugin[];
+  plugins: DisTunePlugin[];
   emitNewSongOnly: boolean;
   savePreviousSongs: boolean;
   customFilters?: Filters;
@@ -11,9 +11,9 @@ export class Options {
   emitAddListWhenCreatingQueue: boolean;
   joinNewVoiceChannel: boolean;
   ffmpeg: FFmpegOptions;
-  constructor(options: DisTubeOptions) {
+  constructor(options: DisTuneOptions) {
     if (typeof options !== "object" || Array.isArray(options)) {
-      throw new DisTubeError("INVALID_TYPE", "object", options, "DisTubeOptions");
+      throw new DisTuneError("INVALID_TYPE", "object", options, "DisTuneOptions");
     }
     const opts = { ...defaultOptions, ...options };
     this.plugins = opts.plugins;
@@ -25,7 +25,7 @@ export class Options {
     this.emitAddListWhenCreatingQueue = opts.emitAddListWhenCreatingQueue;
     this.joinNewVoiceChannel = opts.joinNewVoiceChannel;
     this.ffmpeg = this.#ffmpegOption(options);
-    checkInvalidKey(opts, this, "DisTubeOptions");
+    checkInvalidKey(opts, this, "DisTuneOptions");
     this.#validateOptions();
   }
 
@@ -46,28 +46,28 @@ export class Options {
     for (const [key, value] of Object.entries(options)) {
       if (value === undefined && optionalOptions.has(key)) continue;
       if (key === "plugins" && !Array.isArray(value)) {
-        throw new DisTubeError("INVALID_TYPE", "Array<Plugin>", value, `DisTubeOptions.${key}`);
+        throw new DisTuneError("INVALID_TYPE", "Array<Plugin>", value, `DisTuneOptions.${key}`);
       } else if (booleanOptions.has(key)) {
         if (typeof value !== "boolean") {
-          throw new DisTubeError("INVALID_TYPE", "boolean", value, `DisTubeOptions.${key}`);
+          throw new DisTuneError("INVALID_TYPE", "boolean", value, `DisTuneOptions.${key}`);
         }
       } else if (numberOptions.has(key)) {
         if (typeof value !== "number" || isNaN(value)) {
-          throw new DisTubeError("INVALID_TYPE", "number", value, `DisTubeOptions.${key}`);
+          throw new DisTuneError("INVALID_TYPE", "number", value, `DisTuneOptions.${key}`);
         }
       } else if (stringOptions.has(key)) {
         if (typeof value !== "string") {
-          throw new DisTubeError("INVALID_TYPE", "string", value, `DisTubeOptions.${key}`);
+          throw new DisTuneError("INVALID_TYPE", "string", value, `DisTuneOptions.${key}`);
         }
       } else if (objectOptions.has(key)) {
         if (typeof value !== "object" || Array.isArray(value)) {
-          throw new DisTubeError("INVALID_TYPE", "object", value, `DisTubeOptions.${key}`);
+          throw new DisTuneError("INVALID_TYPE", "object", value, `DisTuneOptions.${key}`);
         }
       }
     }
   }
 
-  #ffmpegOption(opts: DisTubeOptions) {
+  #ffmpegOption(opts: DisTuneOptions) {
     const args: FFmpegArgs = { global: {}, input: {}, output: {} };
     if (opts.ffmpeg?.args) {
       if (opts.ffmpeg.args.global) args.global = opts.ffmpeg.args.global;
@@ -76,11 +76,11 @@ export class Options {
     }
     const path = opts.ffmpeg?.path ?? "ffmpeg";
     if (typeof path !== "string") {
-      throw new DisTubeError("INVALID_TYPE", "string", path, "DisTubeOptions.ffmpeg.path");
+      throw new DisTuneError("INVALID_TYPE", "string", path, "DisTuneOptions.ffmpeg.path");
     }
     for (const [key, value] of Object.entries(args)) {
       if (typeof value !== "object" || Array.isArray(value)) {
-        throw new DisTubeError("INVALID_TYPE", "object", value, `DisTubeOptions.ffmpeg.${key}`);
+        throw new DisTuneError("INVALID_TYPE", "object", value, `DisTuneOptions.ffmpeg.${key}`);
       }
       for (const [k, v] of Object.entries(value)) {
         if (
@@ -91,11 +91,11 @@ export class Options {
           v !== null &&
           v !== undefined
         ) {
-          throw new DisTubeError(
+          throw new DisTuneError(
             "INVALID_TYPE",
             ["string", "number", "boolean", "Array<string | null | undefined>", "null", "undefined"],
             v,
-            `DisTubeOptions.ffmpeg.${key}.${k}`,
+            `DisTuneOptions.ffmpeg.${key}.${k}`,
           );
         }
       }

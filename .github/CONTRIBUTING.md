@@ -1,12 +1,12 @@
-# Contributing to DisTube
+# Contributing to DisTune
 
-Thank you for your interest in contributing to DisTube! This document provides guidelines and instructions for contributing to the project.
+Thank you for your interest in contributing to DisTune! This document provides guidelines and instructions for contributing to the project.
 
 ## 📝 Issues
 
 - The issue tracker is for bug reports only.
 - For questions or feature suggestions, please use our [Discord Support Server](https://discord.gg/feaDd9h).
-- Before creating an issue, please check the [FAQ](https://github.com/skick1234/DisTube/wiki/Frequently-Asked-Questions) and existing issues (both open and closed).
+- Before creating an issue, please check the [FAQ](https://github.com/DisTuneJS/DisTune/wiki/Frequently-Asked-Questions) and existing issues (both open and closed).
 
 ## 🛠️ Pull Requests
 
@@ -41,7 +41,7 @@ We welcome contributions via pull requests! Please follow these guidelines:
     git commit -m "feat: add new feature"
     ```
 
-6.  **Create a pull request:** Push your branch to your fork and open a pull request against the `main` branch of the DisTube repository.
+6.  **Create a pull request:** Push your branch to your fork and open a pull request against the `main` branch of the DisTune repository.
 
 ### Pull Request Guidelines
 
@@ -54,7 +54,7 @@ We welcome contributions via pull requests! Please follow these guidelines:
 
 ## ⚙️ Development Setup
 
-DisTube is built with TypeScript and uses the following tools:
+DisTune is built with TypeScript and uses the following tools:
 
 - [pnpm](https://pnpm.io/): Package manager (though npm is also supported)
 - [Prettier](https://prettier.io/): Code formatter
@@ -64,7 +64,7 @@ DisTube is built with TypeScript and uses the following tools:
 
 ## ⚖️ License
 
-By contributing to DisTube, you agree that your contributions will be licensed under the [MIT License](LICENSE).
+By contributing to DisTune, you agree that your contributions will be licensed under the [MIT License](LICENSE).
 
 ## ❓ Support
 

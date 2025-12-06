@@ -12,4 +12,4 @@ export * from "./constant";
 export * from "./struct";
 export * from "./util";
 export * from "./core";
-export { DisTube, DisTube as default } from "./DisTube";
+export { DisTune, DisTune as default } from "./DisTune";

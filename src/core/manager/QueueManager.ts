@@ -1,5 +1,5 @@
 import { GuildIdManager } from ".";
-import { DisTubeError, DisTubeStream, Events, Queue, RepeatMode, checkFFmpeg, objectKeys } from "../..";
+import { DisTuneError, DisTuneStream, Events, Queue, RepeatMode, checkFFmpeg, objectKeys } from "../..";
 import type { Song } from "../..";
 import type { GuildTextBasedChannel, VoiceBasedChannel } from "discord.js";
 
@@ -14,13 +14,13 @@ export class QueueManager extends GuildIdManager<Queue> {
    * @returns Returns `true` if encounter an error
    */
   async create(channel: VoiceBasedChannel, textChannel?: GuildTextBasedChannel): Promise<Queue> {
-    if (this.has(channel.guildId)) throw new DisTubeError("QUEUE_EXIST");
+    if (this.has(channel.guildId)) throw new DisTuneError("QUEUE_EXIST");
     this.debug(`[QueueManager] Creating queue for guild: ${channel.guildId}`);
     const voice = this.voices.create(channel);
-    const queue = new Queue(this.distube, voice, textChannel);
+    const queue = new Queue(this.distune, voice, textChannel);
     await queue._taskQueue.queuing();
     try {
-      checkFFmpeg(this.distube);
+      checkFFmpeg(this.distune);
       this.debug(`[QueueManager] Joining voice channel: ${channel.id}`);
       await voice.join();
       this.#voiceEventHandler(queue);
@@ -33,7 +33,7 @@ export class QueueManager extends GuildIdManager<Queue> {
   }
 
   /**
-   * Listen to DisTubeVoice events and handle the Queue
+   * Listen to DisTuneVoice events and handle the Queue
    * @param queue - Queue
    */
   #voiceEventHandler(queue: Queue) {
@@ -154,8 +154,8 @@ export class QueueManager extends GuildIdManager<Queue> {
       await this.handler.attachStreamInfo(song);
       const willPlaySong = song.stream.playFromSource ? song : song.stream.song;
       const stream = willPlaySong?.stream;
-      if (!willPlaySong || !stream?.playFromSource || !stream.url) throw new DisTubeError("NO_STREAM_URL", `${song}`);
-      this.debug(`[${queue.id}] Creating DisTubeStream for: ${willPlaySong}`);
+      if (!willPlaySong || !stream?.playFromSource || !stream.url) throw new DisTuneError("NO_STREAM_URL", `${song}`);
+      this.debug(`[${queue.id}] Creating DisTuneStream for: ${willPlaySong}`);
       const streamOptions = {
         ffmpeg: {
           path: this.options.ffmpeg.path,
@@ -167,7 +167,7 @@ export class QueueManager extends GuildIdManager<Queue> {
         },
         seek: willPlaySong.duration ? queue._beginTime : undefined,
       };
-      const dtStream = new DisTubeStream(stream.url, streamOptions);
+      const dtStream = new DisTuneStream(stream.url, streamOptions);
       dtStream.on("debug", data => this.emit(Events.FFMPEG_DEBUG, `[${queue.id}] ${data}`));
       this.debug(`[${queue.id}] Started playing: ${willPlaySong}`);
       await queue.voice.play(dtStream);

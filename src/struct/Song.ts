@@ -1,7 +1,7 @@
-import { Playlist } from ".";
-import { DisTubeError, formatDuration, isMemberInstance } from "..";
+import { Album, Playlist } from ".";
+import { DisTuneError, formatDuration, isMemberInstance } from "..";
 import type { GuildMember } from "discord.js";
-import type { DisTubePlugin, ResolveOptions, SongInfo } from "..";
+import type { DisTunePlugin, ResolveOptions, SongInfo } from "..";
 
 /**
  * Class representing a song.
@@ -93,10 +93,11 @@ export class Song<T = unknown> {
   /**
    * The plugin that created this song
    */
-  plugin: DisTubePlugin | null;
+  plugin: DisTunePlugin | null;
   #metadata!: T;
   #member?: GuildMember;
   #playlist?: Playlist;
+  #album?: Album;
   /**
    * Create a Song
    *
@@ -135,9 +136,22 @@ export class Song<T = unknown> {
   }
 
   set playlist(playlist: Playlist | undefined) {
-    if (!(playlist instanceof Playlist)) throw new DisTubeError("INVALID_TYPE", "Playlist", playlist, "Song#playlist");
+    if (!(playlist instanceof Playlist)) throw new DisTuneError("INVALID_TYPE", "Playlist", playlist, "Song#playlist");
     this.#playlist = playlist;
     this.member = playlist.member;
+  }
+
+  /**
+   * The album this song belongs to
+   */
+  get album() {
+    return this.#album;
+  }
+
+  set album(album: Album | undefined) {
+    if (!(album instanceof Album)) throw new DisTuneError("INVALID_TYPE", "Album", album, "Song#album");
+    this.#album = album;
+    this.member = album.member;
   }
 
   /**
@@ -160,7 +174,7 @@ export class Song<T = unknown> {
 
   /**
    * Optional metadata that can be used to identify the song. This is attached by the
-   * {@link DisTube#play} method.
+   * {@link DisTune#play} method.
    */
   get metadata() {
     return this.#metadata;

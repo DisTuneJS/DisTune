@@ -1,6 +1,6 @@
 import { Plugin } from ".";
 import { PluginType } from "..";
-import type { Awaitable, Playlist, ResolveOptions, Song } from "..";
+import type { Awaitable, Playlist, ResolveOptions, Song, Album } from "..";
 
 /**
  * This plugin can extract the info, search, and play a song directly from its source
@@ -30,4 +30,28 @@ export abstract class ExtractorPlugin extends Plugin {
    * @param song - Input song
    */
   abstract getStreamURL<T>(song: Song<T>): Awaitable<string>;
+  /**
+   * Search for songs. Optional for plugins to implement.
+   * Returns multiple song results.
+   * @param query   - Search query
+   * @param limit   - Maximum number of results
+   * @param options - Optional options
+   */
+  searchSongs?<T>(query: string, limit: number, options: ResolveOptions<T>): Awaitable<Song<T>[]>;
+  /**
+   * Search for albums. Optional for plugins to implement.
+   * Returns multiple album results.
+   * @param query   - Search query
+   * @param limit   - Maximum number of results
+   * @param options - Optional options
+   */
+  searchAlbums?<T>(query: string, limit: number, options: ResolveOptions<T>): Awaitable<Album<T>[]>;
+  /**
+   * Search for playlists. Optional for plugins to implement.
+   * Returns multiple playlist results.
+   * @param query   - Search query
+   * @param limit   - Maximum number of results
+   * @param options - Optional options
+   */
+  searchPlaylists?<T>(query: string, limit: number, options: ResolveOptions<T>): Awaitable<Playlist<T>[]>;
 }

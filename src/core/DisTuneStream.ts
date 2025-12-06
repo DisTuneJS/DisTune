@@ -1,15 +1,15 @@
 import { Transform } from "stream";
-import { DisTubeError, Events } from "..";
+import { DisTuneError, Events } from "..";
 import { spawn, spawnSync } from "child_process";
 import { TypedEmitter } from "tiny-typed-emitter";
 import { StreamType, createAudioResource } from "@discordjs/voice";
 import type { TransformCallback } from "stream";
 import type { ChildProcess } from "child_process";
 import type { AudioResource } from "@discordjs/voice";
-import type { Awaitable, DisTube, FFmpegArg, FFmpegOptions } from "..";
+import type { Awaitable, DisTune, FFmpegArg, FFmpegOptions } from "..";
 
 /**
- * Options for {@link DisTubeStream}
+ * Options for {@link DisTuneStream}
  */
 export interface StreamOptions {
   /**
@@ -24,10 +24,10 @@ export interface StreamOptions {
 }
 
 let checked = process.env.NODE_ENV === "test";
-export const checkFFmpeg = (distube: DisTube) => {
+export const checkFFmpeg = (distune: DisTune) => {
   if (checked) return;
-  const path = distube.options.ffmpeg.path;
-  const debug = (str: string) => distube.emit(Events.FFMPEG_DEBUG, str);
+  const path = distune.options.ffmpeg.path;
+  const debug = (str: string) => distune.emit(Events.FFMPEG_DEBUG, str);
   try {
     debug(`[test] spawn ffmpeg at '${path}' path`);
     const process = spawnSync(path, ["-h"], { windowsHide: true, shell: true, encoding: "utf-8" });
@@ -40,15 +40,15 @@ export const checkFFmpeg = (distube: DisTube) => {
     debug(`[test] ffmpeg version: ${version}`);
   } catch (e: any) {
     debug(`[test] failed to spawn ffmpeg at '${path}': ${e?.stack ?? e}`);
-    throw new DisTubeError("FFMPEG_NOT_INSTALLED", path);
+    throw new DisTuneError("FFMPEG_NOT_INSTALLED", path);
   }
   checked = true;
 };
 
 /**
- * Create a stream to play with {@link DisTubeVoice}
+ * Create a stream to play with {@link DisTuneVoice}
  */
-export class DisTubeStream extends TypedEmitter<{
+export class DisTuneStream extends TypedEmitter<{
   debug: (debug: string) => Awaitable;
   error: (error: Error) => Awaitable;
 }> {
@@ -58,7 +58,7 @@ export class DisTubeStream extends TypedEmitter<{
   stream: VolumeTransformer;
   audioResource: AudioResource;
   /**
-   * Create a DisTubeStream to play with {@link DisTubeVoice}
+   * Create a DisTuneStream to play with {@link DisTuneVoice}
    * @param url     - Stream URL
    * @param options - Stream options
    */
@@ -131,7 +131,7 @@ export class DisTubeStream extends TypedEmitter<{
         this.debug(`[process] exit: code=${code ?? "unknown"} signal=${signal ?? "unknown"}`);
         if (!code || [0, 255].includes(code)) return;
         this.debug(`[process] error: ffmpeg exited with code ${code}`);
-        this.emit("error", new DisTubeError("FFMPEG_EXITED", code));
+        this.emit("error", new DisTuneError("FFMPEG_EXITED", code));
       });
 
     if (!this.process.stdout || !this.process.stderr) {

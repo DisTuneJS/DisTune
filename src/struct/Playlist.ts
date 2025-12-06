@@ -1,4 +1,4 @@
-import { DisTubeError, formatDuration, isMemberInstance } from "..";
+import { DisTuneError, formatDuration, isMemberInstance } from "..";
 import type { GuildMember } from "discord.js";
 import type { PlaylistInfo, ResolveOptions, Song } from "..";
 
@@ -38,7 +38,7 @@ export class Playlist<T = unknown> implements PlaylistInfo {
    * @param options   - Optional data
    */
   constructor(playlist: PlaylistInfo, { member, metadata }: ResolveOptions<T> = {}) {
-    if (!Array.isArray(playlist.songs) || !playlist.songs.length) throw new DisTubeError("EMPTY_PLAYLIST");
+    if (!Array.isArray(playlist.songs) || !playlist.songs.length) throw new DisTuneError("EMPTY_PLAYLIST");
 
     this.source = playlist.source.toLowerCase();
     this.songs = playlist.songs;
