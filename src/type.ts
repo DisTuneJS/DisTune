@@ -1,4 +1,5 @@
 import type {
+  Album,
   DisTuneError,
   DisTuneVoice,
   ExtractorPlugin,
@@ -25,6 +26,7 @@ export enum Events {
   ERROR = "error",
   ADD_LIST = "addList",
   ADD_SONG = "addSong",
+  ADD_ALBUM = "addAlbum",
   PLAY_SONG = "playSong",
   FINISH_SONG = "finishSong",
   EMPTY = "empty",
@@ -40,6 +42,7 @@ export enum Events {
 export type DisTuneEvents = {
   [Events.ADD_LIST]: [queue: Queue, playlist: Playlist];
   [Events.ADD_SONG]: [queue: Queue, song: Song];
+  [Events.ADD_ALBUM]: [queue: Queue, album: Album];
   [Events.DELETE_QUEUE]: [queue: Queue];
   [Events.DISCONNECT]: [queue: Queue];
   [Events.ERROR]: [error: Error, queue: Queue, song: Song | undefined];
@@ -291,6 +294,13 @@ export interface ResolvePlaylistOptions<T = unknown> extends ResolveOptions<T> {
   source?: string;
 }
 
+export interface ResolveAlbumOptions<T = unknown> extends ResolveOptions<T> {
+  /**
+   * Source of the album
+   */
+  source?: string;
+}
+
 export interface CustomPlaylistOptions {
   /**
    * A guild member creating the playlist
@@ -320,6 +330,53 @@ export interface CustomPlaylistOptions {
    * Playlist thumbnail
    */
   thumbnail?: string;
+}
+
+export interface CustomAlbumOptions {
+  /**
+   * A guild member creating the album
+   */
+  member?: GuildMember;
+  /**
+   * Whether or not fetch the songs in parallel
+   */
+  parallel?: boolean;
+  /**
+   * Metadata
+   */
+  metadata?: any;
+  /**
+   * Album name
+   */
+  name?: string;
+  /**
+   * Album source
+   */
+  source?: string;
+  /**
+   * Album url
+   */
+  url?: string;
+  /**
+   * Album thumbnail
+   */
+  thumbnail?: string;
+  /**
+   * Album artist name
+   */
+  artist?: string;
+  /**
+   * Album artist ID
+   */
+  artistId?: string;
+  /**
+   * Album release year
+   */
+  year?: number;
+  /**
+   * Album genre
+   */
+  genre?: string;
 }
 
 /**

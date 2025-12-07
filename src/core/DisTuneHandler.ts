@@ -1,6 +1,6 @@
 import { DisTuneBase } from ".";
 import { request } from "undici";
-import { DisTuneError, Playlist, PluginType, Song, isURL } from "..";
+import { Album, DisTuneError, Playlist, PluginType, Song, isURL } from "..";
 import type { DisTunePlugin, ResolveOptions } from "..";
 
 const REDIRECT_CODES = new Set([301, 302, 303, 307, 308]);
@@ -11,19 +11,24 @@ const REDIRECT_CODES = new Set([301, 302, 303, 307, 308]);
 export class DisTuneHandler extends DisTuneBase {
   resolve<T = unknown>(song: Song<T>, options?: Omit<ResolveOptions, "metadata">): Promise<Song<T>>;
   resolve<T = unknown>(song: Playlist<T>, options?: Omit<ResolveOptions, "metadata">): Promise<Playlist<T>>;
-  resolve<T = unknown>(song: string, options?: ResolveOptions<T>): Promise<Song<T> | Playlist<T>>;
+  resolve<T = unknown>(song: Album<T>, options?: Omit<ResolveOptions, "metadata">): Promise<Album<T>>;
+  resolve<T = unknown>(song: string, options?: ResolveOptions<T>): Promise<Song<T> | Playlist<T> | Album<T>>;
   resolve<T = unknown>(song: Song, options: ResolveOptions<T>): Promise<Song<T>>;
   resolve<T = unknown>(song: Playlist, options: ResolveOptions<T>): Promise<Playlist<T>>;
-  resolve(song: string | Song | Playlist, options?: ResolveOptions): Promise<Song | Playlist>;
+  resolve<T = unknown>(song: Album, options: ResolveOptions<T>): Promise<Album<T>>;
+  resolve(song: string | Song | Playlist | Album, options?: ResolveOptions): Promise<Song | Playlist | Album>;
   /**
-   * Resolve a url or a supported object to a {@link Song} or {@link Playlist}
+   * Resolve a url or a supported object to a {@link Song}, {@link Playlist}, or {@link Album}
    * @throws {@link DisTuneError}
    * @param input   - Resolvable input
    * @param options - Optional options
    * @returns Resolved
    */
-  async resolve(input: string | Song | Playlist, options: ResolveOptions = {}): Promise<Song | Playlist> {
-    if (input instanceof Song || input instanceof Playlist) {
+  async resolve(
+    input: string | Song | Playlist | Album,
+    options: ResolveOptions = {},
+  ): Promise<Song | Playlist | Album> {
+    if (input instanceof Song || input instanceof Playlist || input instanceof Album) {
       if ("metadata" in options) input.metadata = options.metadata;
       if ("member" in options) input.member = options.member;
       return input;

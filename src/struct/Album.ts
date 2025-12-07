@@ -42,6 +42,7 @@ export class Album<T = unknown> implements AlbumInfo {
    * Album release year.
    */
   year?: number;
+  ageRestricted?: boolean;
   /**
    * Album genre.
    */

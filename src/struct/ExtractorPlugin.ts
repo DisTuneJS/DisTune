@@ -1,6 +1,6 @@
 import { Plugin } from ".";
 import { PluginType } from "..";
-import type { Awaitable, Playlist, ResolveOptions, Song, Album } from "..";
+import type { Album, Awaitable, Playlist, ResolveOptions, Song } from "..";
 
 /**
  * This plugin can extract the info, search, and play a song directly from its source
@@ -13,11 +13,11 @@ export abstract class ExtractorPlugin extends Plugin {
    */
   abstract validate(url: string): Awaitable<boolean>;
   /**
-   * Resolve the validated url to a {@link Song} or a {@link Playlist}.
+   * Resolve the validated url to a {@link Song}, {@link Playlist}, or {@link Album}.
    * @param url     - URL
    * @param options - Optional options
    */
-  abstract resolve<T>(url: string, options: ResolveOptions<T>): Awaitable<Song<T> | Playlist<T>>;
+  abstract resolve<T>(url: string, options: ResolveOptions<T>): Awaitable<Song<T> | Playlist<T> | Album<T>>;
   /**
    * Search for a Song which playable from this plugin's source
    * @param query   - Search query

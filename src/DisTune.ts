@@ -1,5 +1,6 @@
 import { TypedEmitter } from "tiny-typed-emitter";
 import {
+  Album,
   DisTuneError,
   DisTuneHandler,
   DisTuneVoiceManager,
@@ -52,6 +53,13 @@ export class DisTune extends TypedEmitter<TypedDisTuneEvents> {
    * @param song  - Added song
    */
   static readonly [Events.ADD_SONG]: (queue: Queue, song: Song) => Awaitable;
+  /**
+   * @event
+   * Emitter after DisTune adds a new album to the playing {@link Queue}.
+   * @param queue - The guild queue
+   * @param album - Added album
+   */
+  static readonly [Events.ADD_ALBUM]: (queue: Queue, album: Album) => Awaitable;
   /**
    * @event
    * Emitted when a {@link Queue} is deleted with any reasons.
@@ -182,17 +190,17 @@ export class DisTune extends TypedEmitter<TypedDisTuneEvents> {
   }
 
   /**
-   * Play / add a song or playlist from url.
+   * Play / add a song, playlist, or album from url.
    * Search and play a song (with {@link ExtractorPlugin}) if it is not a valid url.
    * @throws {@link DisTuneError}
    * @param voiceChannel - The channel will be joined if the bot isn't in any channels, the bot will be
    *                       moved to this channel if {@link DisTuneOptions}.joinNewVoiceChannel is `true`
-   * @param song         - URL | Search string | {@link Song} | {@link Playlist}
+   * @param song         - URL | Search string | {@link Song} | {@link Playlist} | {@link Album}
    * @param options      - Optional options
    */
   async play<T = unknown>(
     voiceChannel: VoiceBasedChannel,
-    song: string | Song | Playlist,
+    song: string | Song | Playlist | Album,
     options: PlayOptions<T> = {},
   ): Promise<void> {
     if (!isSupportedVoiceChannel(voiceChannel)) {
@@ -233,6 +241,15 @@ export class DisTune extends TypedEmitter<TypedDisTuneEvents> {
         this.debug(`[${queue.id}] Adding playlist to queue: ${resolved.songs.length} songs`);
         queue.addToQueue(resolved.songs, position);
         if (queue.playing || this.options.emitAddListWhenCreatingQueue) this.emit(Events.ADD_LIST, queue, resolved);
+      } else if (resolved instanceof Album) {
+        if (!this.options.nsfw && !isNsfw) {
+          resolved.songs = resolved.songs.filter(s => !s.ageRestricted);
+          if (!resolved.songs.length) throw new DisTuneError("EMPTY_FILTERED_ALBUM");
+        }
+        if (!resolved.songs.length) throw new DisTuneError("EMPTY_ALBUM");
+        this.debug(`[${queue.id}] Adding album to queue: ${resolved.songs.length} songs`);
+        queue.addToQueue(resolved.songs, position);
+        if (queue.playing || this.options.emitAddListWhenCreatingQueue) this.emit(Events.ADD_ALBUM, queue, resolved);
       } else {
         if (!this.options.nsfw && resolved.ageRestricted && !isNsfwChannel(queue?.textChannel || textChannel)) {
           throw new DisTuneError("NON_NSFW");

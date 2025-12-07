@@ -61,6 +61,9 @@ const ERROR_MESSAGES = {
     "There is no valid video in the playlist\n" +
     "Maybe age-restricted contents is filtered because you are in non-NSFW channel",
   EMPTY_PLAYLIST: "There is no valid video in the playlist",
+  EMPTY_FILTERED_ALBUM:
+    "There is no valid song in the album\n" +
+    "Maybe age-restricted contents is filtered because you are in non-NSFW channel",
   EMPTY_ALBUM: "There is no valid song in the album",
 };
 
