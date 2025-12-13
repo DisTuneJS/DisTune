@@ -7,6 +7,7 @@ import type { DisTunePlugin, ResolveOptions, SongInfo } from "..";
  * Class representing a song.
  */
 export class Song<T = unknown> {
+  readonly type = "song";
   /**
    * The source of this song info
    */
@@ -55,6 +56,10 @@ export class Song<T = unknown> {
    * Song repost (share) count
    */
   reposts?: number;
+  /**
+   * Song artist name
+   */
+  artist?: string;
   /**
    * Song uploader
    */
@@ -119,6 +124,7 @@ export class Song<T = unknown> {
     this.likes = info.likes;
     this.dislikes = info.dislikes;
     this.reposts = info.reposts;
+    this.artist = info.artist;
     this.uploader = {
       name: info.uploader?.name,
       url: info.uploader?.url,

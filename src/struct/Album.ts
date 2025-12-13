@@ -6,6 +6,7 @@ import type { AlbumInfo, ResolveOptions, Song } from "..";
  * Class representing an album.
  */
 export class Album<T = unknown> implements AlbumInfo {
+  readonly type = "album";
   /**
    * Album source.
    */

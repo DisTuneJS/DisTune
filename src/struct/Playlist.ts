@@ -6,6 +6,7 @@ import type { PlaylistInfo, ResolveOptions, Song } from "..";
  * Class representing a playlist.
  */
 export class Playlist<T = unknown> implements PlaylistInfo {
+  readonly type = "playlist";
   /**
    * Playlist source.
    */

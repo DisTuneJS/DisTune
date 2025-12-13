@@ -207,6 +207,7 @@ export interface SongInfo {
   likes?: number;
   dislikes?: number;
   reposts?: number;
+  artist?: string;
   uploader?: {
     name?: string;
     url?: string;
